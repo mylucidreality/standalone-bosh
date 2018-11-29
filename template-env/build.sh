@@ -1,5 +1,5 @@
 set -e
-ENV="pxe"
+ENV="xxx"
 # DIRECTOR_NAME (ie bosh-xxx)
 DNS_RELEASE="1.10.0"
 BPM_RELEASE="0.13.0"
