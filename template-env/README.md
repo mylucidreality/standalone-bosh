@@ -25,7 +25,7 @@ apt-get install openssl ruby-openssl libssl-dev
 - Set your env variable
 ```ENV=xxx```
 
-Automate the pricess by running ```./build.sh```
+Automate the process by running ```./build.sh```
 
 ## Create Director
 ```
