@@ -191,7 +191,7 @@ credhub find -n tsa_host_key
 
 ```
 git -C ./pcf-tile-configurator pull && git -C ./pcf-swiss-army pull
-ENV=pxa
+ENV=xxx
 bosh -e $ENV -d concourse-workers deploy ./pcf-tile-configurator/bosh-deployments/concourse/workers.yml -l ./pcf-swiss-army/master-params/"$ENV"-params.yml -n
 ```
 
