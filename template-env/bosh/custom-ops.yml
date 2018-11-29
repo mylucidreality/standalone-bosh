@@ -1,0 +1,88 @@
+- type: replace
+  path: /instance_groups/name=bosh/jobs/name=uaa/properties/uaa/ldap?
+  value:
+      emailDomain: []
+      enabled: true
+      mailAttributeName: mail
+      referral: follow
+      searchBase: ((ldap_user_search_base_dns))
+      searchFilter: samAccountName={0}
+      sslCertificate:
+      url: ldap://((ldap_host))
+      userDN: ((ldap_user_dn))
+      userPassword: ((ldap_user_pass))
+      groups:
+        profile_type: groups-map-to-scopes
+        autoAdd: true
+        groupRoleAttribute: 'spring.security.ldap.dn'
+        groupSearchFilter: member={0}
+        maxSearchDepth: 10
+        searchBase: ((ldap_group_search_base_dns))
+        searchSubtree: true
+      ldapdebug: Ldap configured through UAA
+      profile_type: search-and-bind
+      ssl:
+        skipverification: true
+
+- type: replace
+  path: /instance_groups/name=bosh/jobs/name=uaa/properties/uaa/scim/external_groups?
+  value:
+      ldap:
+        TODO:
+          - bosh.admin
+          - cloud_controller.admin
+          - bosh.releases.upload
+          - bosh.stemcells.upload
+          - credhub.write
+          - credhub.read
+          - scim.write
+          - scim.read
+          - clients.read
+          - clients.write
+          - doppler.firehose
+          - routing.router_groups.read
+          - routing.router_groups.write
+          - uaa.admin
+
+- type: replace
+  path: /instance_groups/name=bosh/jobs/name=uaa?/properties/uaa/clients/director?
+  value:
+    authorities: bosh.admin,credhub.read,credhub.write
+    authorized-grant-types: client_credentials
+    override: true
+    scope: uaa.none
+    secret: ((director_password))
+
+- type: replace
+  path: /instance_groups/name=bosh/jobs/name=uaa/properties/uaa/ssl?
+  value:
+    port: 8443
+
+- type: replace
+  path: /instance_groups/name=bosh/jobs/name=uaa/properties/login/prompt?
+  value:
+      password:
+        text: "Enter password"
+      username:
+        text: "Enter UserID"
+
+- type: replace
+  path: /instance_groups/name=bosh/jobs/name=uaa?/properties/uaa/clients/gorouter?
+  value:
+      authorities: clients.read,clients.write,clients.admin,routing.routes.write,routing.routes.read
+      authorized-grant-types: client_credentials,refresh_token
+      id: gorouter
+      secret: ((gorouter_password))
+      scope: ""
+
+
+- type: replace
+  path: /variables/-
+  value:
+    name: gorouter_password
+    type: password
+- type: replace
+  path: /variables/-
+  value:
+    name: director_password
+    type: password

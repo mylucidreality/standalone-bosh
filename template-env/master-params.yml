@@ -1,0 +1,92 @@
+#Release versions
+concourse_version: 4.2.1
+uaa_release_version: '66.0'
+credhub_release_version: 2.1.1
+routing_version: 0.180.0
+minio_version: "2018-07-31T02-11-47Z"
+backup_restore_sdk_release_version: 1.9.0
+garden_runc_version: '1.16.3'
+postgres_version: '30'
+uaa_sha: NA
+credhub_sha: NA
+backup_restore_sdk_sha: NA
+
+#General Config
+azs: [z1,z2]
+
+#Bosh config
+internal_ntp: [""]
+director_name: bosh-xxx
+internal_cidr: x.x.x.0/24
+internal_gw: x.x.x.1
+internal_ip: x.x.x.22
+network_name: 
+vcenter_dc: 
+vcenter_ds: 
+vcenter_ip: 
+vcenter_user: 
+vcenter_password: 
+vcenter_vms: xxx
+vcenter_disks: xxx/pcf_disk_bosh
+vcenter_cluster: 
+internal_dns: [x.x.x.x]
+vcenter_templates: xxx/templates
+vcenter_rp:
+
+smtp_server: 
+smtp_from: 
+smtp_from_name: "Friendly Neighborhood bosh deployment"
+
+#Routing
+nats_servers: [x.x.x.23,x.x.x.24,x.x.x.25]
+gorouters: [x.x.x.26,x.x.x.27,x.x.x.28]
+haproxy_ip: [x.x.x.20]
+SSL_alt_names: ['*.xxx.xxx.xxx', director.xxx.xxx.xxx, credhub.xxx.xxx.xxx, '*.pks.xxx.xxx.xxx', '*.apps.xxx.xxx.xxx', '*.sys.xxx.xxx.xxx', '*.service.cf.internal', x.x.x.22, x.x.x.20, x.x.x.61]
+SSL_cn: '*.xxx.xxx.xxx'
+
+#Credhub
+credhub_static_ips: 
+credhub_mySQL_proxy_ip: 
+credhub_uaa_url: credhub-uaa.xxx.xxx.xxx
+credhub_url: credhub.xxx.xxx.xxx
+credhub_mysql_proxy_url: proxy-mysql.xxx.xxx.xxx
+
+#LDAP
+ldap_bind_dn: "CN="
+ldap_group_search_base_dns: "OU="
+ldap_host: 
+ldap_user_search_base_dns: "OU="
+ldap_group: "CN="
+#These are only used until we can get credhub up and running
+ldap_user_dn: 
+ldap_user_pass: 
+
+#Prometheus Config
+grafana_url: grafana.xxx.xxx.xxx
+
+#Minio
+minio_url: minio.xxx.xxx.xxx
+minio_accesskey: pcf-px
+
+#Docker
+docker_domain: docker.xxx.xxx.xxx
+docker_persistent_disk: 5120
+DOCKER_S3_BUCKET_NAME: docker-images
+
+atc_instances: 2
+worker-instances: 1
+web_vm_type: default
+concourse_user: 
+concourse_pass: 
+concourse_external_host: concourse.xxx.xxx.xxx
+concourse_external_url: https://concourse.xxx.xxx.xxx
+concourse_uaa_host: concourse-uaa.xxx.xxx.xxx
+concourse-ldap-group: 
+concourse_db_vm_type: default
+atc_static_ips: []
+concourse_db_persistent_disk_type: 100GB
+
+#Proxy
+http_proxy_url: 
+https_proxy_url: 
+no_proxy: [""]

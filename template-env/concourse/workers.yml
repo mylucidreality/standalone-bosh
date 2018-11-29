@@ -1,0 +1,105 @@
+---
+instance_groups:
+- azs: ((azs))
+  instances: ((worker_instances))
+  jobs:
+  - consumes:
+      baggageclaim:
+        from: worker-baggageclaim
+    name: worker
+    properties:
+      baggageclaim:
+        forward_address: 127.0.0.1:7788
+      drain_timeout: 10m
+      ephemeral: true
+      garden:
+        forward_address: 127.0.0.1:7777
+      team: ((PCF_ENV))
+      tsa:
+        host: ((remote_tsa_host))
+        host_public_key: ((tsa_host_key.public_key))
+        port: 2222
+        registration_mode: forward
+        worker_key: 
+          private_key: ((worker_key.private_key))
+    release: concourse
+  - name: baggageclaim
+    properties:
+      log_level: debug
+    provides:
+      baggageclaim:
+        as: worker-baggageclaim
+    release: concourse
+  - name: garden
+    properties:
+      garden:
+        listen_address: 127.0.0.1:7777
+        listen_network: tcp
+    release: garden-runc
+  name: worker
+  networks:
+  - name: ((pcf-boshdeploy))
+    static_ips: ((backup_worker_static_ips))
+  stemcell: xenial
+  vm_type: 2xlarge.disk
+
+- azs: ((azs))
+  instances: ((backup_worker_instances))
+  jobs:
+  - consumes:
+      baggageclaim:
+        from: worker-baggageclaim-backups
+    name: worker
+    properties:
+      baggageclaim:
+        forward_address: 127.0.0.1:7788
+      garden:
+        forward_address: 127.0.0.1:7777
+      team: ((PCF_ENV))
+      tags: [backups]
+      tsa:
+        host: ((remote_tsa_host))
+        host_public_key: ((tsa_host_key.public_key))
+        port: 2222
+        registration_mode: forward
+        worker_key: 
+          private_key: ((worker_key.private_key))
+    release: concourse
+  - name: baggageclaim
+    properties:
+      log_level: debug
+    provides:
+      baggageclaim:
+        as: worker-baggageclaim-backups
+    release: concourse
+  - name: garden
+    properties:
+      garden:
+        listen_address: 127.0.0.1:7777
+        listen_network: tcp
+    release: garden-runc
+  name: worker-backups
+  networks:
+  - name: ((pcf-boshdeploy))
+    static_ips: ((worker_static_ips))
+  stemcell: xenial
+  vm_resources:
+    cpu: ((backup_worker_cpu))
+    ephemeral_disk_size: ((backup_worker_ephemeral_disk_size))
+    ram: ((backup_worker_ram))
+name: concourse-workers
+releases:
+- name: concourse
+  version: 4.2.1
+- name: garden-runc
+  version: 1.16.3
+stemcells:
+- alias: xenial
+  os: ubuntu-xenial
+  version: latest
+update:
+  canaries: 1
+  canary_watch_time: 1000-60000
+  max_in_flight: 1
+  serial: false
+  update_watch_time: 1000-60000

@@ -1,0 +1,10 @@
+releases:
+- name: bpm
+  version: "0.13.0"
+
+addons:
+- name: bpm
+  jobs:
+  - name: bpm
+    release: bpm
+    properties: {}

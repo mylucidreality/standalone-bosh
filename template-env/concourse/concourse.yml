@@ -1,0 +1,163 @@
+---
+name: concourse
+
+releases:
+- name: concourse
+  version: ((concourse_version))
+- name: garden-runc
+  version: ((garden_runc_version))
+- name: postgres
+  version: latest
+- name: routing
+  version: latest
+
+stemcells:
+- alias: xenial
+  os: ubuntu-xenial
+  version: latest
+update:
+  canaries: 1
+  canary_watch_time: 1000-60000
+  max_in_flight: 3
+  serial: false
+  update_watch_time: 1000-60000
+
+
+instance_groups:
+- name: web
+  azs: ((azs))
+  networks:
+  - name: default
+    static_ips: ((atc_static_ips))
+  stemcell: xenial
+  vm_type: ((web_vm_type))
+  instances: ((atc_instances))
+  jobs:
+  - name: route_registrar
+    consumes:
+      nats:
+        deployment: routing
+        from: nats
+    properties:
+      route_registrar:
+        routes:
+        - name: concourse
+          port: 8080
+          registration_interval: 20s
+          uris: [((concourse_external_host))]
+    release: routing
+  - name: atc
+    release: concourse
+    properties:
+      ldap_auth:
+        host: ((ldap_host)):389
+        insecure_no_ssl: true
+        start_tls: false
+        user_search_base_dn: ((ldap_user_search_base_dns))
+        user_search_username: sAMAccountName
+        bind_dn: ((/ldap_user.username))
+        bind_pw: ((/ldap_user.password))
+        user_search_scope: sub
+        user_search_id_attr: sAMAccountName
+        user_search_email_attr: mail
+        user_search_name_attr: name
+        group_search_base_dn: ((ldap_group_search_base_dns))
+        group_search_scope: sub
+        group_search_group_attr: member
+        group_search_name_attr: cn
+        group_search_user_attr: distinguishedName
+      add_local_users:
+        - ((concourse_user)):((concourse_pass))
+      auth_duration: 24h
+      build_log_retention:
+        default: 10
+      bind_port: 8080
+      tls_bind_port: 443
+      container_placement_strategy: random
+      external_url: ((concourse_external_url))
+      log_level: debug
+      main_team:
+        auth:
+          allow_all_users: false
+          local:
+            users: [((concourse_user))]
+          ldap:
+           groups: [((concourse-ldap-group))]
+      postgresql:
+        database: atc
+        sslmode: disable
+        role:
+          name: concourse
+          password: ((postgres_password))
+      token_signing_key: ((token_signing_key))
+  - name: tsa
+    release: concourse
+    properties:
+      log_level: debug
+      host_key: ((tsa_host_key))
+      token_signing_key: ((token_signing_key))
+      authorized_keys: [((worker_key.public_key))]
+
+- name: db
+  instances: 1
+  azs: ((azs))
+  networks:
+  - name: default
+  stemcell: xenial
+  vm_type: ((concourse_db_vm_type))
+  persistent_disk_type: ((concourse_db_persistent_disk_type))
+  jobs:
+  - release: postgres
+    name: postgres
+    properties:
+      databases:
+        port: 5432
+        databases:
+        - name: atc
+        roles:
+        - name: concourse
+          password: ((postgres_password))
+
+- name: worker
+  azs: ((azs))
+  instances: 3
+  jobs:
+  - consumes:
+      baggageclaim:
+        from: worker-baggageclaim
+    name: worker
+    properties:
+      drain_timeout: 10m
+      http_proxy_url: ((http_proxy_url))
+      https_proxy_url: ((http_proxy_url))
+      no_proxy: ((no_proxy))
+      drain_timeout: 10m
+      tsa: {worker_key: ((worker_key))}
+    release: concourse
+  - release: concourse
+    name: baggageclaim
+    properties: {log_level: debug}
+    provides: {baggageclaim: {as: worker-baggageclaim}}
+
+  - release: garden-runc
+    name: garden
+    properties:
+      garden:
+        listen_network: tcp
+        listen_address: 0.0.0.0:7777
+  networks:
+  - name: default
+  stemcell: xenial
+  vm_type: 2xlarge.mem
+
+variables:
+- name: postgres_password
+  type: password
+- name: token_signing_key
+  type: rsa
+- name: tsa_host_key
+  type: ssh
+- name: worker_key
+  type: ssh
+- name: concourse_pass
+  type: password

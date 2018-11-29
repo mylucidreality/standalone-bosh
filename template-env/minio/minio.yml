@@ -1,0 +1,74 @@
+instance_groups:
+- azs: [z1,z2]
+  instances: 4
+  jobs:
+  - name: route_registrar
+    release: routing
+    consumes:
+      nats:
+        deployment: routing
+        from: nats
+    properties:
+      route_registrar:
+        routes:
+        - name: minio
+          port: 9000
+          registration_interval: 20s
+          uris: 
+          - ((minio_url))
+    release: routing
+  - name: minio-server
+    properties:
+      credential:
+        accesskey: ((minio_accesskey))
+        secretkey: ((minio_secretkey))
+      port: 9000
+    provides:
+      minio-server:
+        as: minio-link
+    release: minio
+  name: minio
+  networks:
+  - name: default
+  persistent_disk_type: default
+  stemcell: default
+  vm_type: default
+- azs:
+  - z1
+  instances: 1
+  jobs:
+  - consumes:
+      minio:
+        from: minio-link
+    name: smoke-tests
+    release: minio
+    templates:
+    - name: smoke-tests
+  lifecycle: errand
+  name: tests
+  networks:
+  - name: default
+  persistent_disk_type: default
+  post_deploy: true
+  stemcell: default
+  vm_type: default
+name: minio
+releases:
+- name: minio
+  version: latest
+- name: routing
+  version: latest
+stemcells:
+- alias: default
+  os: ubuntu-trusty
+  version: latest
+update:
+  canaries: 1
+  canary_watch_time: 1000-30000
+  max_in_flight: 1
+  update_watch_time: 1000-30000
+variables:
+- name: minio_secretkey
+  type: password
+  options:
+    length: 16

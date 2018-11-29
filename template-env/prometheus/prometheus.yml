@@ -1,0 +1,221 @@
+---
+name: prometheus
+
+instance_groups:
+  - name: prometheus2
+    azs:
+      - z1
+    instances: 1
+    vm_type: default
+    persistent_disk: 10_240
+    stemcell: default
+    networks:
+      - name: default
+    jobs:
+      - name: prometheus2
+        release: prometheus
+        properties:
+          prometheus:
+            rule_files:
+              - /var/vcap/jobs/postgres_alerts/*.alerts.yml
+              - /var/vcap/jobs/prometheus_alerts/*.alerts.yml
+            scrape_interval: 15s
+            scrape_configs:
+              - job_name: prometheus
+                static_configs:
+                - targets:
+                  - localhost:9090
+      - name: postgres_alerts
+        release: prometheus
+      - name: prometheus_alerts
+        release: prometheus
+
+  - name: database
+    azs:
+      - z1
+    instances: 1
+    vm_type: default
+    persistent_disk: 10_240
+    stemcell: default
+    networks:
+      - name: default
+    jobs:
+      - name: postgres
+        release: postgres
+        properties:
+          databases:
+            port: 5432
+            databases:
+              - name: grafana
+                citext: true
+            roles:
+              - name: grafana
+                password: ((postgres_grafana_password))
+      - name: postgres_exporter
+        release: prometheus
+        properties:
+          postgres_exporter:
+            datasource_name: postgresql://grafana:((postgres_grafana_password))@127.0.0.1:5432/?sslmode=disable
+
+  - name: grafana
+    azs:
+      - z1
+    instances: 3
+    vm_type: default
+    persistent_disk: 1_024
+    stemcell: default
+    networks:
+      - name: default
+    jobs:
+      - name: grafana
+        release: prometheus
+        properties:
+          # env:
+          #   http_proxy: ((http_proxy_url))
+          #   https_proxy: ((http_proxy_url))
+          #   no_proxy: ((no_proxy))
+          grafana:
+            alerting:
+              enabled: true
+            auth:
+              anonymous:
+                enabled: true
+                org_role: "Viewer"
+              ldap:
+                config: |
+                  #This has to be set manually.  parameters will not work
+                  verbose_logging = true
+                  [[servers]]
+
+                  host = TODO
+                  port = 389
+                  use_ssl = false
+                  start_tls = false
+                  ssl_skip_verify = true
+                  bind_dn = TODO
+                  bind_password = TODO
+                  search_filter = "(|(sAMAccountName=%s)(userPrincipalName=%s))"
+                  search_base_dns = [TODO]
+                  group_search_base_dns = [TODO]
+
+                  [servers.attributes]
+                  name = "givenName"
+                  surname = "sn"
+                  username = "cn"
+                  member_of = "memberOf"
+                  email =  "mail"
+
+                  [[servers.group_mappings]]
+                  group_dn = TODO
+                  org_role = "Admin"
+
+                enabled: true
+            emails:
+              welcome_email_on_sign_up: true
+            explore:
+              enabled: true
+            listen_port: 3000
+            database:
+              type: postgres
+              port: 5432
+              name: grafana
+              user: grafana
+              password: ((postgres_grafana_password))
+            session:
+              provider: postgres
+              provider_port: 5432
+              provider_name: grafana
+              provider_user: grafana
+              provider_password: ((postgres_grafana_password))
+            security:
+              admin_user: admin
+              admin_password: ((grafana_password))
+              secret_key: ((grafana_secret_key))
+            smtp:
+              enabled: true
+              from_address: ((smtp_from))
+              from_name: ((smtp_from_name))
+              host: ((smtp_server))
+              skip_verify: true
+            dashboards:
+            prometheus:
+              tls_skip_verify: true
+              dashboard_folders:
+                - name: Grafana
+                  files:
+                    - /var/vcap/jobs/grafana_dashboards/*.json
+                - name: PostgreSQL
+                  files:
+                    - /var/vcap/jobs/postgres_dashboards/*.json
+                - name: Prometheus
+                  files:
+                    - /var/vcap/jobs/prometheus_dashboards/*.json
+      - name: grafana_dashboards
+        release: prometheus
+      - name: postgres_dashboards
+        release: prometheus
+      - name: prometheus_dashboards
+        release: prometheus
+
+  - name: nginx
+    azs:
+      - z1
+    instances: 1
+    vm_type: default
+    stemcell: default
+    networks:
+      - name: default
+    jobs:
+      - name: route_registrar
+        release: routing
+        consumes:
+          nats:
+            deployment: routing
+            from: nats
+        properties:
+          route_registrar:
+            routes:
+            - name: grafana
+              port: 3000
+              registration_interval: 20s
+              uris: [((grafana_url))]
+      - name: nginx
+        release: prometheus
+        properties:
+          nginx:
+            prometheus:
+              auth_users:
+                - name: admin
+                  password: ((prometheus_password))
+
+variables:
+  - name: prometheus_password
+    type: password
+  - name: postgres_grafana_password
+    type: password
+  - name: grafana_password
+    type: password
+  - name: grafana_secret_key
+    type: password
+
+update:
+  canaries: 1
+  max_in_flight: 32
+  canary_watch_time: 1000-100000
+  update_watch_time: 1000-100000
+  serial: false
+
+stemcells:
+  - alias: default
+    os: ubuntu-trusty
+    version: latest
+
+releases:
+- name: routing
+  version: 0.179.0
+- name: postgres
+  sha1: c1fcec62cb9d2e95e3b191e3c91d238e2b9d23fa
+  url: https://bosh.io/d/github.com/cloudfoundry/postgres-release?v=28
+  version: "28"
+- name: prometheus
+  version: 23.3.0

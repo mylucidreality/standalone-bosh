@@ -1,0 +1,70 @@
+---
+name: docker-registry
+releases:
+  - name: routing
+    version: latest
+  - name: docker-registry
+    version: latest
+
+stemcells:
+  - alias: default
+    os: ubuntu-trusty
+    version: latest
+
+instance_groups:
+  - azs: ((azs))
+    instances: 2
+    jobs:
+    - name: route_registrar
+      release: routing
+      consumes:
+        nats:
+          deployment: routing
+          from: nats
+      properties:
+        route_registrar:
+            routes:
+            - name: docker-registry
+              port: 5000
+              registration_interval: 20s
+              uris: [((docker_domain))]
+        release: routing
+    - name: registry
+      release: docker-registry
+    - name: proxy
+      release: docker-registry
+    - name: cache
+      release: docker-registry
+    name: docker-registry
+    networks:
+    - name: default
+    persistent_disk: ((docker_persistent_disk))
+    properties:
+      docker:
+        cache:
+          host: 127.0.0.1
+          redis:
+            maxmemory: 2g
+        registry:
+          bind: ''
+          endpoint: https://((docker_domain))
+          port: 5000
+          storage:
+            s3:
+              accesskey: ((minio_accesskey))
+              bucket: ((DOCKER_S3_BUCKET_NAME))
+              region: Standard
+              regionendpoint: ((minio_url))
+              secretkey: ((minio_accesskey))
+              secure: false
+          storage_delete: true
+    stemcell: default
+    vm_type: default
+
+
+update:
+  canaries: 1
+  canary_watch_time: 1000-60000
+  max_in_flight: 50
+  serial: false
+  update_watch_time: 1000-60000

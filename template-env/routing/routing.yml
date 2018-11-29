@@ -1,0 +1,165 @@
+---
+name: routing
+releases:
+- name: routing
+  version: latest
+- name: nats
+  version: latest
+- name: haproxy
+  version: latest
+stemcells:
+- alias: default
+  os: ubuntu-trusty
+  version: latest
+update:
+  serial: true
+  canaries: 1
+  max_in_flight: 1
+  canary_watch_time: 1000-40000
+  update_watch_time: 1000-40000
+
+instance_groups:
+- name: nats-server
+  azs: [z1,z2]
+  instances: 3
+  jobs:
+  - name: nats
+    provides:
+      nats:
+        as: nats
+        shared: true
+    release: nats
+    properties:
+      nats:
+        password: "((nats-credentials.password))"
+        user: "((nats-credentials.username))"
+        port: 4222
+        debug: true
+  networks:
+  - name: default
+    static_ips: ((nats_servers))
+  vm_type: default
+  stemcell: default
+
+- name: gorouter
+  azs: [z1,z2]
+  instances: 3
+  jobs:
+  - name: gorouter
+    release: routing
+    properties:
+      request_timeout_in_seconds: 900
+      consumes:
+        nats:
+          from: routing
+      uaa:
+        clients:
+          gorouter:
+            secret: ((/gorouter_password))
+        ssl:
+          port: 8443
+      router:
+        forwarded_client_cert: always_forward
+        disable_http: false
+        enable_ssl: true
+        status:
+          password: ((router_status_password))
+          user: router-status
+          port: 8080
+        route_services_secret: ((router_route_services_secret))
+        port: 80
+        ssl_skip_validation: true
+        logging_level: debug
+        tracing:
+          enable_zipkin: true
+        write_access_logs_locally: true
+        tls_pem: 
+        - cert_chain: |
+            ((cert.certificate))
+          private_key: ((cert.private_key))
+  networks:
+  - name: default
+    static_ips: ((gorouters))
+  vm_type: default
+  stemcell: default
+
+- name: ha_proxy
+  azs: [z1]
+  instances: 1
+  jobs:
+  - name: haproxy
+    release: haproxy
+    properties:
+      ha_proxy:
+        backend_http_health_port: 8080
+        buffer_size_bytes: 16384
+        client_cert: false
+        client_timeout: 900
+        client_cert_ignore_err: all
+        disable_http: false
+        disable_tls_10: true
+        disable_tls_11: true
+        enable_health_check_http: true
+        hsts_enable: false
+        hsts_include_subdomains: false
+        hsts_max_age: 0
+        hsts_preload: false
+        internal_only_domains: []
+        keepalive_timeout: 900
+        server_timeout: 900
+        ssl_ciphers: DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384
+        stats_enable: true
+        stats_user: stats
+        stats_password: ((router_stats_password))
+        backend_port: 80
+        backend_servers: ((gorouters))
+        https_redirect_all: true
+        log_level: debug
+        tcp_link_port: 2222
+        ssl_pem: |+
+          ((cert.private_key))
+          ((cert.certificate))
+    release: haproxy
+  lifecycle: service
+  vm_type: default
+  stemcell: default
+  update:
+    max_in_flight: 1
+  networks: 
+    - name: default
+      static_ips: ((haproxy_ip))
+
+- name: nats-smoke-tests
+  azs: [z2]
+  instances: 1
+  jobs:
+  - name: smoke-tests
+    release: nats
+  lifecycle: errand
+  networks:
+  - name: default
+  stemcell: default
+  vm_type: default
+
+variables:
+- name: default_ca
+  type: certificate
+  options:
+    is_ca: true
+    common_name: ca
+- name: cert
+  type: certificate
+  options:
+    ca: default_ca
+    common_name: ((SSL_cn))
+    alternative_names: ((SSL_alt_names))
+- name: router_status_password
+  type: password
+- name: router_route_services_secret
+  type: password
+- name: router_stats_password
+  type: password
+- name: nats-credentials
+  options:
+    username: nats
+  type: user
