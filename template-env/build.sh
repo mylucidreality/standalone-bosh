@@ -105,7 +105,7 @@ unset BOSH_CLIENT
 unset BOSH_CLIENT_SECRET
 export BOSH_CLIENT=director
 export BOSH_CLIENT_SECRET=$(bosh int ./$ENV/bosh/director-vars-store.yml --path /director_password)
-bosh alias-env $ENV -e $DIRECTOR_IP --ca-cert $(bosh int ./$ENV/bosh/director-vars-store.yml --path /director_ssl/ca) && \
+bosh alias-env $ENV -e $DIRECTOR_IP --ca-cert "$(bosh int ./$ENV/bosh/director-vars-store.yml --path /director_ssl/ca)" && \
 bosh -e $ENV login --client=admin --client-secret=$(bosh int ./$ENV/bosh/director-vars-store.yml --path /admin_password)
 
 echo -e "$(tput rev)"

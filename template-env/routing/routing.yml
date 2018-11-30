@@ -20,7 +20,7 @@ update:
 
 instance_groups:
 - name: nats-server
-  azs: [z1,z2]
+  azs: ((azs))
   instances: 3
   jobs:
   - name: nats
@@ -42,7 +42,7 @@ instance_groups:
   stemcell: default
 
 - name: gorouter
-  azs: [z1,z2]
+  azs: ((azs))
   instances: 3
   jobs:
   - name: gorouter
