@@ -18,6 +18,7 @@ OS_CONF_RELEASE="20.0.0"
 MINIO_RELEASE="2018-11-17T01-23-48Z"
 DOCKER_REGISTRY_RELEASE="3.3.2"
 PROMETHEUS_RELEASE="23.3.0"
+GOGS_RELEASE="5.4.0"
 DIRECTOR_IP="TODO"
 
 
@@ -32,9 +33,9 @@ NC='\033[0m' # No Color
 
 echo -e "$(tput rev)"
 echo -e "======================================================="
-echo -e " Hold on, here we go."
-echo -e ""
-echo -e " Creating bosh Director manifest for archival purposes"
+echo -e " Hold on, here we go.                                  "
+echo -e "                                                       "
+echo -e " Creating bosh Director manifest for archival purposes "
 echo -e "======================================================="
 echo -e "$(tput sgr0)"
 # create something to look at
@@ -53,11 +54,11 @@ bosh int ./bosh.yml \
 && git add -A && git commit -m "a director manifest" && git push
 
 echo -e "$(tput rev)"
-echo -e "====================================================="
+echo -e "======================================================"
 echo -e "  Deploying bosh Director with DNS, UAA, credhub, bbr,"
-echo -e "  ntp, jumpbox-user and components defined within"
-echo -e "  ./$ENV/bosh/custom-ops.yml"
-echo -e "====================================================="
+echo -e "  ntp, jumpbox-user and components defined within     "
+echo -e "  ./$ENV/bosh/custom-ops.yml                          "
+echo -e "======================================================"
 echo -e "$(tput sgr0)"
 # Create Director
 bosh create-env ./bosh.yml \
@@ -96,7 +97,7 @@ credhub set -n /uaa_clients_director_to_credhub  --type password --password=$(bo
 
 echo -e "$(tput rev)"
 echo -e "================================="
-echo -e "boshing into the new environment"
+echo -e "boshing into the new environment "
 echo -e "================================="
 echo -e "$(tput sgr0)"
 # Log into Director
@@ -109,7 +110,7 @@ bosh -e $ENV login --client=admin --client-secret=$(bosh int ./$ENV/bosh/directo
 
 echo -e "$(tput rev)"
 echo -e "======================="
-echo -e "Pushing a cloud-config"
+echo -e "Pushing a cloud-config "
 echo -e "======================="
 echo -e "$(tput sgr0)"
 # Add cloud-config
@@ -117,7 +118,7 @@ bosh -e $ENV update-cloud-config ./$ENV/bosh/cloud-config.yml -n
 
 echo -e "$(tput rev)"
 echo -e "=========================================================================="
-echo -e "Downloading/Uploading/deploying stemcells, releases, and runtime-configs"
+echo -e "Downloading/Uploading/deploying stemcells, releases, and runtime-configs  "
 echo -e "=========================================================================="
 echo -e "$(tput sgr0)"
 # Runtime-configs, releases, and stemcells
@@ -174,12 +175,15 @@ bosh -e $ENV upload-release /tmp/routing.tgz && \
 rm /tmp/routing.tgz && \
 wget https://bosh.io/d/github.com/cloudfoundry/os-conf-release?v="$OS_CONF_RELEASE" -O /tmp/os-conf.tgz && \
 bosh -e $ENV upload-release /tmp/os-conf.tgz && \
-rm /tmp/os-conf.tgz
+rm /tmp/os-conf.tgz && \
+wget https://bosh.io/d/github.com/cloudfoundry-community/gogs-boshrelease?v="$GOGS_RELEASE" -O /tmp/gogs.tgz && \
+bosh -e $ENV upload-release /tmp/gogs.tgz && \
+rm /tmp/gogs.tgz
 
 # Deploy routing
 echo -e "$(tput rev)"
 echo -e "=============================="
-echo -e "Deploying Routing components"
+echo -e "Deploying Routing components  "
 echo -e "=============================="
 echo -e "$(tput sgr0)"
 bosh -e $ENV -d routing deploy ./$ENV/routing/routing.yml -l ./$ENV/master-params.yml -n
@@ -187,7 +191,7 @@ bosh -e $ENV -d routing deploy ./$ENV/routing/routing.yml -l ./$ENV/master-param
 # Deploy Credhub
 echo -e "$(tput rev)"
 echo -e "=============================="
-echo -e "Deploying Credhub"
+echo -e "Deploying Credhub             "
 echo -e "=============================="
 echo -e "$(tput sgr0)"
 bosh -e $ENV -d credhub deploy ./$ENV/credhub/credhub.yml -l ./$ENV/master-params.yml -n
@@ -195,7 +199,7 @@ bosh -e $ENV -d credhub deploy ./$ENV/credhub/credhub.yml -l ./$ENV/master-param
 #Deploy Concourse
 echo -e "$(tput rev)"
 echo -e "=============================="
-echo -e "Deploying Concourse"
+echo -e "Deploying Concourse           "
 echo -e "=============================="
 echo -e "$(tput sgr0)"
 bosh -e $ENV -d concourse deploy ./$ENV/concourse/concourse.yml -l ./$ENV/master-params.yml -n
@@ -203,7 +207,7 @@ bosh -e $ENV -d concourse deploy ./$ENV/concourse/concourse.yml -l ./$ENV/master
 #Deploy Minio/Docker-Registry
 echo -e "$(tput rev)"
 echo -e "====================================="
-echo -e "Deploying Minio and Docker-Registry"
+echo -e "Deploying Minio and Docker-Registry  "
 echo -e "====================================="
 echo -e "$(tput sgr0)"
 bosh -e $ENV deploy -d minio ./$ENV/minio/minio.yml -l ./$ENV/master-params.yml -n && \
@@ -212,7 +216,7 @@ bosh -e $ENV deploy -d docker-registry ./$ENV/docker-registry/docker.yml -l ./$E
 #Deploy Prometheus and Grafana
 echo -e "$(tput rev)"
 echo -e "======================"
-echo -e "Deploying Prometheus"
+echo -e "Deploying Prometheus  "
 echo -e "======================"
 echo -e "$(tput sgr0)"
 bosh -e $ENV -d prometheus deploy ./$ENV/prometheus/prometheus.yml -l ./$ENV/master-params.yml -n
