@@ -1,0 +1,12 @@
+- type: replace
+  path: /instance_groups/name=web/jobs/name=atc/properties/credhub?
+  value:
+        url: https://((credhub_static_ips)):8844
+        tls:
+          ca_certs:
+            - |
+              ((/certs/wildcard.ca))
+              ((/certs/wildcard.certificate))
+          insecure_skip_verify: true
+        client_id: concourse_to_credhub
+        client_secret: ((/concourse/concourse_to_credhub_secret))

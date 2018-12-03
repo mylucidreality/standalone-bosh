@@ -1,0 +1,24 @@
+- type: replace
+  path: /instance_groups/name=web/jobs/name=atc/properties/ldap_auth?
+  value:
+    host: ((ldap_host)):389
+    insecure_no_ssl: true
+    start_tls: false
+    user_search_base_dn: ((ldap_user_search_base_dns))
+    user_search_username: sAMAccountName
+    bind_dn: ((/ldap_user.username))
+    bind_pw: ((/ldap_user.password))
+    user_search_scope: sub
+    user_search_id_attr: sAMAccountName
+    user_search_email_attr: mail
+    user_search_name_attr: name
+    group_search_base_dn: ((ldap_group_search_base_dns))
+    group_search_scope: sub
+    group_search_group_attr: member
+    group_search_name_attr: cn
+    group_search_user_attr: distinguishedName
+
+- type: replace
+  path: /instance_groups/name=web/jobs/name=atc/properties/main_team/auth/ldap?
+  value:
+    groups: [((concourse-ldap-group))]

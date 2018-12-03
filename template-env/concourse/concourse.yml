@@ -9,7 +9,7 @@ releases:
 - name: postgres
   version: latest
 - name: routing
-  version: latest
+  version: 0.179.0
 
 stemcells:
 - alias: xenial
@@ -49,40 +49,21 @@ instance_groups:
   - name: atc
     release: concourse
     properties:
-      ldap_auth:
-        host: ((ldap_host)):389
-        insecure_no_ssl: true
-        start_tls: false
-        user_search_base_dn: ((ldap_user_search_base_dns))
-        user_search_username: sAMAccountName
-        bind_dn: ((/ldap_user.username))
-        bind_pw: ((/ldap_user.password))
-        user_search_scope: sub
-        user_search_id_attr: sAMAccountName
-        user_search_email_attr: mail
-        user_search_name_attr: name
-        group_search_base_dn: ((ldap_group_search_base_dns))
-        group_search_scope: sub
-        group_search_group_attr: member
-        group_search_name_attr: cn
-        group_search_user_attr: distinguishedName
       add_local_users:
-        - ((concourse_user)):((concourse_pass))
+        - ((concourse_user.username)):((concourse_user.password))
       auth_duration: 24h
       build_log_retention:
         default: 10
       bind_port: 8080
       tls_bind_port: 443
       container_placement_strategy: random
-      external_url: ((concourse_external_url))
+      external_url: https://((concourse_external_host))
       log_level: debug
       main_team:
         auth:
           allow_all_users: false
           local:
-            users: [((concourse_user))]
-          ldap:
-           groups: [((concourse-ldap-group))]
+            users: [((concourse_user.username))]
       postgresql:
         database: atc
         sslmode: disable
@@ -128,10 +109,6 @@ instance_groups:
     name: worker
     properties:
       drain_timeout: 10m
-      http_proxy_url: ((http_proxy_url))
-      https_proxy_url: ((http_proxy_url))
-      no_proxy: ((no_proxy))
-      drain_timeout: 10m
       tsa: {worker_key: ((worker_key))}
     release: concourse
   - release: concourse
@@ -161,3 +138,7 @@ variables:
   type: ssh
 - name: concourse_pass
   type: password
+- name: concourse_user
+  options:
+    username: ((concourse_userid))
+  type: user

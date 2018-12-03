@@ -39,7 +39,7 @@ smtp_from_name: "Friendly Neighborhood bosh deployment"
 
 #Routing
 nats_servers: [x.x.x.23,x.x.x.24,x.x.x.25]
-gorouters: [x.x.x.26,x.x.x.27,x.x.x.28]
+gorouters_ips: [x.x.x.26,x.x.x.27,x.x.x.28]
 haproxy_ip: [x.x.x.20]
 SSL_alt_names: ['*.xxx.xxx.xxx', director.xxx.xxx.xxx, credhub.xxx.xxx.xxx, '*.pks.xxx.xxx.xxx', '*.apps.xxx.xxx.xxx', '*.sys.xxx.xxx.xxx', '*.service.cf.internal', x.x.x.22, x.x.x.20, x.x.x.61]
 SSL_cn: '*.xxx.xxx.xxx'
@@ -74,10 +74,9 @@ docker_persistent_disk: 5120
 DOCKER_S3_BUCKET_NAME: docker-images
 
 atc_instances: 2
-worker-instances: 1
+
 web_vm_type: default
-concourse_user: 
-concourse_pass: 
+concourse_userid: 
 concourse_external_host: concourse.xxx.xxx.xxx
 concourse_external_url: https://concourse.xxx.xxx.xxx
 concourse_uaa_host: concourse-uaa.xxx.xxx.xxx

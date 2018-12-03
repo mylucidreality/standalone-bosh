@@ -15,17 +15,14 @@ gem install yajl-ruby
 
 ### Ubuntu Trusty
 ```
-sudo apt-get install -y build-essential zlibc zlib1g-dev ruby ruby-dev openssl libxslt-dev libxml2-dev libssl-dev libreadline7 libreadline6-dev libyaml-dev libsqlite3-dev sqlite3
+sudo apt-get install -y build-essential zlibc zlib1g-dev ruby ruby-openssl ruby-dev openssl libxslt-dev libxml2-dev libssl-dev libreadline7 libreadline6-dev libyaml-dev libsqlite3-dev sqlite3
 ```
-The official documentation is greatly lacking.  I installed the below to get it to work from my vm
-```
-apt-get install openssl ruby-openssl libssl-dev
-```
+
 # Install
 - Set your env variable
 ```ENV=xxx```
 
-Automate the process by running ```./build.sh```
+Automate the pricess by running ```./build.sh```
 
 ## Create Director
 ```
@@ -82,26 +79,6 @@ bosh -e $ENV update-cloud-config ./$ENV/bosh/cloud-config.yml
 
 ## Runtime-configs, releases, and stemcells
 ```
-ENV="xxx"
-# DIRECTOR_NAME (ie bosh-xxx)
-DNS_RELEASE="1.10.0"
-BPM_RELEASE="0.13.0"
-NATS_RELEASE="26"
-CF_ROUTING_RELEASE="0.180.0"
-HA_PROXY_RELEASE="8.0.6"
-XENIAL_STEMCELL_VERSION="97.12"
-TRUSTY_STEMCELL_VERSION="3586.36"
-GARDEN_RUNC_RELEASE="1.16.3"
-CONCOURSE_RELEASE="4.2.1"
-POSTGRES_RELEASE="28"
-CF_MYSQL_RELEASE="36.16.0"
-CREDHUB_RELEASE="2.1.1"
-UAA_RELEASE="66.0"
-OS_CONF_RELEASE="20.0.0"
-MINIO_RELEASE="2018-11-17T01-23-48Z"
-DOCKER_REGISTRY_RELEASE="3.3.2"
-PROMETHEUS_RELEASE="23.3.0"
-DIRECTOR_IP="TODO"
 wget https://bosh.io/d/github.com/cloudfoundry/bosh-dns-release?v="$DNS_RELEASE" -O /tmp/dns.tgz --no-check-certificate && \
 bosh -e $ENV upload-release /tmp/dns.tgz && \
 rm /tmp/dns.tgz && bosh -e $ENV update-runtime-config runtime-configs/dns.yml --name dns -n && \
@@ -191,7 +168,7 @@ credhub find -n tsa_host_key
 
 ```
 git -C ./pcf-tile-configurator pull && git -C ./pcf-swiss-army pull
-ENV=xxx
+ENV=pxa
 bosh -e $ENV -d concourse-workers deploy ./pcf-tile-configurator/bosh-deployments/concourse/workers.yml -l ./pcf-swiss-army/master-params/"$ENV"-params.yml -n
 ```
 

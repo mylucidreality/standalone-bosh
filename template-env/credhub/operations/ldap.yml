@@ -1,0 +1,40 @@
+- type: replace
+  path: /instance_groups/name=credhub/jobs/name=uaa/properties/uaa/ldap?
+  value:
+    emailDomain: []
+    enabled: true
+    groups:
+      groupSearchFilter: member={0}
+      profile_type: groups-map-to-scopes
+      searchBase: ((ldap_group_search_base_dns))
+    mailAttributeName: mail
+    referral: follow
+    searchBase: ((ldap_user_search_base_dns))
+    searchFilter: samAccountName={0}
+    url: ldap://((ldap_host)):389
+    userDN: ((/ldap_user.username))
+    userPassword: ((/ldap_user.password))
+    groups:
+      profile_type: groups-map-to-scopes
+      autoAdd: true
+      groupRoleAttribute: 'spring.security.ldap.dn'
+      groupSearchFilter: member={0}
+      maxSearchDepth: 10
+      searchBase: ((ldap_group_search_base_dns))
+      searchSubtree: true
+    profile_type: search-and-bind
+    ssl:
+      skipverification: true
+
+
+- type: replace
+  path: /instance_groups/name=credhub/jobs/name=uaa/properties/uaa/scim/external_groups?
+  value:
+    ldap:
+      ((ldap_group)):
+        - credhub.write
+        - credhub.read
+        - scim.write
+        - scim.read
+        - clients.read
+        - clients.write

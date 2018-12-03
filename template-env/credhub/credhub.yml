@@ -1,5 +1,4 @@
 ---
-#TODO Change "/bosh-pxems" to match your deployment name
 name: credhub
 
 releases:
@@ -46,9 +45,9 @@ instance_groups:
           admin_username: admin
           admin_password: ((db_admin_password))
           tls:
-            ca_certificate: ((/bosh-pxems/routing/cert.ca))
-            server_certificate: ((/bosh-pxems/routing/cert.certificate))
-            server_key: ((/bosh-pxems/routing/cert.private_key))
+            ca_certificate: ((/certs/wildcard.ca))
+            server_certificate: ((/certs/wildcard.certificate))
+            server_key: ((/certs/wildcard.private_key))
           seeded_databases:
             - name: credhub
               username: credhub
@@ -228,35 +227,10 @@ instance_groups:
       bpm:
         enabled: false
       uaa:
-        ca_cert: ((/bosh-pxems/routing/default_ca.certificate))
+        ca_cert: ((/certs/default_ca.certificate))
         url: https://((credhub_uaa_url))
         catalina_opts: -Djava.security.egd=file:/dev/./urandom -Xmx768m -XX:MaxMetaspaceSize=256m
         log_level: debug
-        ldap:
-          emailDomain: []
-          enabled: true
-          groups:
-            groupSearchFilter: member={0}
-            profile_type: groups-map-to-scopes
-            searchBase: ((ldap_group_search_base_dns))
-          mailAttributeName: mail
-          referral: follow
-          searchBase: ((ldap_user_search_base_dns))
-          searchFilter: samAccountName={0}
-          url: ldap://((ldap_host)):389
-          userDN: ((/ldap_user.username))
-          userPassword: ((/ldap_user.password))
-          groups:
-            profile_type: groups-map-to-scopes
-            autoAdd: true
-            groupRoleAttribute: 'spring.security.ldap.dn'
-            groupSearchFilter: member={0}
-            maxSearchDepth: 10
-            searchBase: ((ldap_group_search_base_dns))
-            searchSubtree: true
-          profile_type: search-and-bind
-          ssl:
-            skipverification: true
         scim:
           users:
           - name: admin
@@ -267,15 +241,6 @@ instance_groups:
               - bosh.admin
               - credhub.read
               - credhub.write
-          external_groups:
-            ldap:
-              CN=TODO:
-                - credhub.write
-                - credhub.read
-                - scim.write
-                - scim.read
-                - clients.read
-                - clients.write
         clients:
           credhub_admin_client:
             override: true
@@ -306,13 +271,6 @@ instance_groups:
             refresh-token-validity: 3600
             scope: ""
             secret: ((/concourse/concourse_to_credhub_secret))
-          credhub-admin:
-            access-token-validity: 3600
-            authorities: credhub.read,credhub.write
-            authorized-grant-types: client_credentials
-            override: true
-            scope: ""
-            secret: jrefbyo4zv6fow0i1f9n
         jwt:
           revocable: true
           policy:
@@ -326,8 +284,8 @@ instance_groups:
         zones:
           internal:
             hostnames: []
-        sslCertificate: ((/bosh-pxems/routing/default_ca.certificate))
-        sslPrivateKey: ((/bosh-pxems/routing/default_ca.private_key))
+        sslCertificate: ((/certs/default_ca.certificate))
+        sslPrivateKey: ((/certs/default_ca.private_key))
       uaadb:
         address: ((credhub_mySQL_proxy_ip))
         port: 3306
@@ -343,12 +301,12 @@ instance_groups:
       login:
         prompt:
           password:
-            text: "Enter dat credhub UAA password"
-          user:
-            text: "Enter dat Username"
+            text: "Enter credhub UAA password"
+          username:
+            text: "Enter Credhub Username"
         saml:
-          serviceProviderCertificate: ((/bosh-pxems/routing/default_ca.certificate))
-          serviceProviderKey: ((/bosh-pxems/routing/default_ca.private_key))
+          serviceProviderCertificate: ((/certs/default_ca.certificate))
+          serviceProviderKey: ((/certs/default_ca.private_key))
           serviceProviderKeyPassword: ""
       encryption:
         active_key_label: uaa-encryption-key-1
@@ -363,14 +321,14 @@ instance_groups:
         shared: true
     properties:
       credhub:
-        tls: ((/bosh-pxems/routing/cert))
+        tls: ((/certs/wildcard))
         port: 8844
         authentication:
           uaa:
             url: https://((credhub_uaa_url))
             verification_key: ((uaa-jwt.public_key))
             ca_certs:
-            - ((/bosh-pxems/routing/cert.certificate))
+            - ((/certs/wildcard.certificate))
         authorization:
           permissions:
           - actors:
@@ -383,7 +341,7 @@ instance_groups:
             - read_acl
             - write_acl
             path: "/*"
-        ca_certificate: ((/bosh-pxems/routing/cert.ca))
+        ca_certificate: ((/certs/wildcard.ca))
         data_storage:
           type: mysql
           username: credhub
@@ -392,7 +350,7 @@ instance_groups:
           host: ((credhub_mySQL_proxy_ip))
           port: 3306
           require_tls: true
-          tls_ca: ((/bosh-pxems/routing/cert.ca))
+          tls_ca: ((/certs/wildcard.ca))
         log_level: debug
         internal_url: credhub.service.cf.internal
         encryption:

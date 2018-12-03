@@ -1,8 +1,8 @@
 #!/bin/bash
 
 set -e
-PCF_ENV="REPLACE_ME"
-DIRECTOR_IP="REPLACE_ME"
+PCF_ENV="xxx"
+DIRECTOR_IP="x.x.x.x"
 # DIRECTOR_NAME (ie bosh-pxems)
 DNS_RELEASE="1.10.0"
 BPM_RELEASE="0.13.0"
@@ -23,14 +23,6 @@ DOCKER_REGISTRY_RELEASE="3.3.2"
 PROMETHEUS_RELEASE="23.3.0"
 GOGS_RELEASE="5.4.0"
 
-BLACK='\033[0;30m'
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-ORANGE='\033[0;33m'
-BLUE='\033[0;34m'
-PURPLE='\033[0;35m'
-WHITE='\033[1;37m'
-NC='\033[0m' # No Color
 
 echo -e "$(tput rev)"
 echo -e "======================================================="
@@ -76,14 +68,13 @@ bosh create-env ./bosh.yml \
 -o ./$PCF_ENV/bosh/REPLACE_ME-ops.yml \
 && git add -A && git commit -m "adding director vars store and state" && git push
 
-read -p "Press [Enter] after manual credhub process completed"
 echo -e "$(tput rev)"
 echo -e "==========================================================================="
 echo -e "  Adding generated creds to director's credhub for use by other deployments"
 echo -e "==========================================================================="
 echo -e "$(tput sgr0)"
 # Add stuff to director credhub
-cat << EOF
+
 credhub api --server $DIRECTOR_IP:8844 --skip-tls-validation
 credhub login --client-name=credhub-admin --client-secret=$(bosh int ./$PCF_ENV/bosh/director-vars-store.yml --path /credhub_admin_client_secret)
 credhub set -n /credhub-admin -t user -z credhub-admin -w $(bosh int ./$PCF_ENV/bosh/director-vars-store.yml --path /credhub_admin_client_secret)
@@ -98,8 +89,7 @@ credhub set -n /mbus_bootstrap_password  --type password --password=$(bosh int .
 credhub set -n /credhub_encryption_password  --type password --password=$(bosh int ./$PCF_ENV/bosh/director-vars-store.yml --path /credhub_encryption_password)
 credhub set -n /uaa_admin_client_secret  --type password --password=$(bosh int ./$PCF_ENV/bosh/director-vars-store.yml --path /uaa_admin_client_secret)
 credhub set -n /uaa_clients_director_to_credhub  --type password --password=$(bosh int ./$PCF_ENV/bosh/director-vars-store.yml --path /uaa_clients_director_to_credhub)
-EOF
-read -p "Press [Enter] after manual Credhub..."
+
 echo -e "$(tput rev)"
 echo -e "================================="
 echo -e "boshing into the new environment "
@@ -195,12 +185,12 @@ echo -e "$(tput sgr0)"
 bosh -e $PCF_ENV -d routing deploy ./$PCF_ENV/routing/routing.yml -l ./$PCF_ENV/master-params.yml -n
 
 # Deploy MySQL
-# echo -e "$(tput rev)"
-# echo -e "=============================="
-# echo -e "Deploying MySQL Cluster       "
-# echo -e "=============================="
-# echo -e "$(tput sgr0)"
-# bosh -e $PCF_ENV -d mysql deploy ./$PCF_ENV/mysql/mysql.yml -l ./$PCF_ENV/master-params.yml -n
+echo -e "$(tput rev)"
+echo -e "=============================="
+echo -e "Deploying MySQL Cluster       "
+echo -e "=============================="
+echo -e "$(tput sgr0)"
+bosh -e $PCF_ENV -d mysql deploy ./$PCF_ENV/mysql/mysql.yml -l ./$PCF_ENV/master-params.yml -n
 
 # Deploy Credhub
 echo -e "$(tput rev)"
@@ -208,7 +198,7 @@ echo -e "=============================="
 echo -e "Deploying Credhub             "
 echo -e "=============================="
 echo -e "$(tput sgr0)"
-bosh -e $PCF_ENV -d credhub deploy ./$PCF_ENV/credhub/credhub.yml -o ./$PCF_ENV/credhub/ldap.yml -l ./$PCF_ENV/master-params.yml -n
+bosh -e $PCF_ENV -d credhub deploy ./$PCF_ENV/credhub/credhub.yml -o ./$PCF_ENV/credhub/operations/ldap.yml -o ./$PCF_ENV/credhub/operations/central-db.yml -l ./$PCF_ENV/master-params.yml -n
 
 #Deploy Concourse
 echo -e "$(tput rev)"
@@ -216,7 +206,7 @@ echo -e "=============================="
 echo -e "Deploying Concourse           "
 echo -e "=============================="
 echo -e "$(tput sgr0)"
-bosh -e $PCF_ENV -d concourse deploy ./$PCF_ENV/concourse/concourse.yml -o ./$PCF_ENV/concourse/credhub.yml -o ./$PCF_ENV/concourse/proxy.yml -o ./$PCF_ENV/concourse/ldap.yml -l ./$PCF_ENV/master-params.yml -n
+bosh -e $PCF_ENV -d concourse deploy ./$PCF_ENV/concourse/concourse.yml -o ./$PCF_ENV/concourse/operations/credhub.yml -o ./$PCF_ENV/concourse/operations/proxy.yml -o ./$PCF_ENV/concourse/operations/ldap.yml -l ./$PCF_ENV/master-params.yml -n
 
 #Deploy Minio/Docker-Registry
 echo -e "$(tput rev)"
@@ -233,7 +223,7 @@ echo -e "======================"
 echo -e "Deploying Prometheus  "
 echo -e "======================"
 echo -e "$(tput sgr0)"
-bosh -e $PCF_ENV -d prometheus deploy ./$PCF_ENV/prometheus/prometheus.yml -l ./$PCF_ENV/master-params.yml -n
+bosh -e $PCF_ENV -d prometheus deploy ./$PCF_ENV/prometheus/prometheus.yml -o ./$PCF_ENV/prometheus/operations/central-db -l ./$PCF_ENV/master-params.yml -n
 
 unset BOSH_CLIENT
 unset BOSH_CLIENT_SECRET

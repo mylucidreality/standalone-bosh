@@ -1,0 +1,79 @@
+#Delete
+- type: remove
+  path: /variables/name=mysql_smoke_tests_db_password
+
+- type: remove
+  path: /variables/name=mysql_proxy_api_password
+
+- type: remove
+  path: /variables/name=galera_healthcheck_endpoint_password
+
+- type: remove
+  path: /variables/name=galera_healthcheck_db_password
+
+- type: remove
+  path: /variables/name=cluster_health_password
+
+- type: remove
+  path: /variables/name=db_admin_password
+
+- type: remove
+  path: /variables/name=credhub_db_password
+
+- type: remove
+  path: /variables/name=credhub_uaa_db_password
+
+- type: remove
+  path: /releases/name=cf-mysql
+
+- type: remove
+  path: /instance_groups/name=db
+
+- type: remove
+  path: /instance_groups/name=arbitrator
+
+- type: remove
+  path: /instance_groups/name=proxy
+
+- type: remove
+  path: /instance_groups/name=bootstrap-vm
+
+- type: remove
+  path: /instance_groups/name=rejoin-unsafe-vm
+
+- type: remove
+  path: /instance_groups/name=verify-cluster-schemas-vm
+
+- type: remove
+  path: /instance_groups/name=smoke-tests-vm
+
+
+- type: replace
+  path: /variables/-
+  value:
+    name: /database/credhub_db_password
+    type: password
+
+- type: replace
+  path: /variables/-
+  value:
+    name: /database/credhub_uaa_db_password
+    type: password
+
+
+- type: replace
+  path: /instance_groups/name=credhub/jobs/name=uaa/properties/uaadb/address?
+  value: ((mySQL_proxy_ip))
+
+- type: replace
+  path: /instance_groups/name=credhub/jobs/name=uaa/properties/uaadb/roles/name=uaa/password?
+  value: ((/database/credhub_uaa_db_password))
+
+
+- type: replace
+  path: /instance_groups/name=credhub/jobs/name=credhub/properties/credhub/data_storage/host?
+  value: ((mySQL_proxy_ip))
+
+- type: replace
+  path: /instance_groups/name=credhub/jobs/name=credhub/properties/credhub/data_storage/password?
+  value: ((/database/credhub_db_password))
