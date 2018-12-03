@@ -16,18 +16,17 @@ bosh -e $PCF_ENV -d mysql deploy ./$PCF_ENV/mysql/mysql.yml -l ./$PCF_ENV/master
 ```
 
 # Inputs
-azs
-mySQL_proxy_ip
+- azs
+- mySQL_proxy_ip
 
 # CredHub Outputs
-/database/credhub_db_password
-/database/credhub_uaa_db_password
-/database/grafana_db_password
-/database/gogs_db_password
-db_admin_password
-cluster_health_password
-galera_healthcheck_db_password
-galera_healthcheck_endpoint_password
-mysql_proxy_api_password
-mysql_smoke_tests_db_password
-
+- /database/credhub_db_password
+- /database/credhub_uaa_db_password
+- /database/grafana_db_password
+- /database/gogs_db_password
+- db_admin_password
+- cluster_health_password
+- galera_healthcheck_db_password
+- galera_healthcheck_endpoint_password
+- mysql_proxy_api_password
+- mysql_smoke_tests_db_password

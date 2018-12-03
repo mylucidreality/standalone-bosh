@@ -33,36 +33,36 @@ bosh -e $PCF_ENV -d concourse deploy ./$PCF_ENV/concourse/concourse.yml -o ./$PC
 ```
 
 ## Inputs
-azs
-concourse_db_persistent_disk_type
-concourse_db_vm_type
-concourse_userid
-concourse_external_host
-atc_instances
-web_vm_type
-atc_static_ips
-garden_runc_version
-concourse_version
+- azs
+- concourse_db_persistent_disk_type
+- concourse_db_vm_type
+- concourse_userid
+- concourse_external_host
+- atc_instances
+- web_vm_type
+- atc_static_ips
+- garden_runc_version
+- concourse_version
 
 ## CredHub Outputs
-concourse_pass
-worker_key
-tsa_host_key
-token_signing_key
-postgres_password
-concourse_user
+- concourse_pass
+- worker_key
+- tsa_host_key
+- token_signing_key
+- postgres_password
+- concourse_user
 
 # Concourse Remote workers deployments
 ## Inputs
-azs
-worker_instances
-remote_tsa_host
-tsa_host_key.public_key
-worker_key.private_key
-worker_static_ips* For pesky firewall rules
+- azs
+- worker_instances
+- remote_tsa_host
+- tsa_host_key.public_key
+- worker_key.private_key
+- worker_static_ips* For pesky firewall rules
 *** This may be omitted if you do not backup via concourse
-backup_worker_static_ips* For pesky firewall rules
-backup_worker_instances
-backup_worker_cpu
-backup_worker_ephemeral_disk_size
-backup_worker_ram
+- backup_worker_static_ips* For pesky firewall rules
+- backup_worker_instances
+- backup_worker_cpu
+- backup_worker_ephemeral_disk_size
+- backup_worker_ram

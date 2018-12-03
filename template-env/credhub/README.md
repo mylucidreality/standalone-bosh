@@ -59,29 +59,29 @@ bosh -e $PCF_ENV -d credhub deploy ./"$PCF_ENV"/credhub/credhub.yml -o ./"$PCF_E
 # Inputs
 
 ## All-in-one
-credhub_mySQL_proxy_ip
-credhub_static_ips
+- credhub_mySQL_proxy_ip
+- credhub_static_ips
 
 ### Centralized database
-mySQL_proxy_ip
-credhub_static_ips
+- mySQL_proxy_ip
+- credhub_static_ips
 
 # CredHub Outputs
-uaa-jwt
-uaa-users-admin
-credhub_uaa_admin_password
-uaa-login
-uaa_encryption_password
-credhub-encryption-password
-credhub-admin-client-password
+- uaa-jwt
+- uaa-users-admin
+- credhub_uaa_admin_password
+- uaa-login
+- - uaa_encryption_password
+- credhub-encryption-password
+- credhub-admin-client-password
 
 ## All-in-one
-mysql_smoke_tests_db_password
-mysql_proxy_api_password
-galera_healthcheck_endpoint_password
-galera_healthcheck_db_password
-cluster_health_password
-db_admin_password
-credhub_db_password
-credhub_uaa_db_password
-/concourse/concourse_to_credhub_secret
+- mysql_smoke_tests_db_password
+- my-sql_proxy_api_password
+- galera_healthcheck_endpoint_password
+- galera_healthcheck_db_password
+- cluster_health_password
+- db_admin_password
+- credhub_db_password
+- credhub_uaa_db_password
+- /concourse/concourse_to_credhub_secret
