@@ -59,8 +59,10 @@ bosh -e $PCF_ENV -d concourse deploy ./$PCF_ENV/concourse/concourse.yml -o ./$PC
 - remote_tsa_host
 - tsa_host_key.public_key
 - worker_key.private_key
-- worker_static_ips* For pesky firewall rules
+- worker_static_ips* For pesky firewall rules between ATC and remote workers
+
 ```*** This may be omitted if you do not backup via concourse```
+
 - backup_worker_static_ips* For pesky firewall rules
 - backup_worker_instances
 - backup_worker_cpu
