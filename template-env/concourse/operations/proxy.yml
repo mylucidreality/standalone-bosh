@@ -3,7 +3,7 @@
   value: ((http_proxy_url))
 - type: replace
   path: /instance_groups/name=worker/jobs/name=worker/properties/https_proxy_url?
-  value: ((http_proxy_url))
+  value: ((https_proxy_url))
 - type: replace
   path: /instance_groups/name=worker/jobs/name=worker/properties/no_proxy?
   value: ((no_proxy))

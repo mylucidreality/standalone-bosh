@@ -5,7 +5,7 @@ releases:
 - name: cf-mysql
   version: latest
 - name: routing
-  version: latest
+  version: 0.179.0
 - name: uaa
   version: latest
 - name: credhub
@@ -88,7 +88,7 @@ instance_groups:
   azs: [z1]
   networks:
   - name: default
-    static_ips: ((credhub_mySQL_proxy_ip))
+    static_ips: [((credhub_mySQL_proxy_ip))]
   vm_type: default
   stemcell: xenial
   jobs:
@@ -195,7 +195,7 @@ instance_groups:
   azs: ((azs))
   networks:
   - name: default
-    static_ips: ((credhub_static_ips))
+    static_ips: [((credhub_static_ips))]
   stemcell: xenial
   persistent_disk: 5120
   vm_type: medium
@@ -238,7 +238,6 @@ instance_groups:
             groups:
               - scim.write
               - scim.read
-              - bosh.admin
               - credhub.read
               - credhub.write
         clients:
@@ -330,6 +329,8 @@ instance_groups:
             ca_certs:
             - ((/certs/wildcard.certificate))
         authorization:
+          acls:
+            enabled: false
           permissions:
           - actors:
             - uaa-client:credhub_admin_client
@@ -340,7 +341,7 @@ instance_groups:
             - delete
             - read_acl
             - write_acl
-            path: "/*"
+            path: /*
         ca_certificate: ((/certs/wildcard.ca))
         data_storage:
           type: mysql

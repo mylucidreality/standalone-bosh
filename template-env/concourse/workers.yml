@@ -38,8 +38,8 @@ instance_groups:
     release: garden-runc
   name: worker
   networks:
-  - name: ((pcf-boshdeploy))
-    static_ips: ((backup_worker_static_ips))
+  - name: default
+    static_ips: ((worker_static_ips))
   stemcell: xenial
   vm_type: 2xlarge.disk
 
@@ -80,8 +80,8 @@ instance_groups:
     release: garden-runc
   name: worker-backups
   networks:
-  - name: ((pcf-boshdeploy))
-    static_ips: ((worker_static_ips))
+  - name: default
+    static_ips: ((backup_worker_static_ips))
   stemcell: xenial
   vm_resources:
     cpu: ((backup_worker_cpu))

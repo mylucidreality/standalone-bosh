@@ -20,7 +20,7 @@ update:
 
 instance_groups:
 - name: nats-server
-  azs: [z1,z2]
+  azs: ((azs))
   instances: 3
   jobs:
   - name: nats
@@ -37,12 +37,12 @@ instance_groups:
         debug: true
   networks:
   - name: default
-    static_ips: ((nats_servers))
+    static_ips: ((nats_ips))
   vm_type: default
   stemcell: default
 
 - name: gorouter
-  azs: [z1,z2]
+  azs: ((azs))
   instances: 3
   jobs:
   - name: gorouter
@@ -75,8 +75,8 @@ instance_groups:
         write_access_logs_locally: true
         tls_pem: 
         - cert_chain: |
-            ((cert.certificate))
-          private_key: ((cert.private_key))
+            ((/certs/wildcard.certificate))
+          private_key: ((/certs/wildcard.private_key))
   networks:
   - name: default
     static_ips: ((gorouters_ips))
@@ -117,8 +117,8 @@ instance_groups:
         log_level: debug
         tcp_link_port: 2222
         ssl_pem: |+
-          ((cert.private_key))
-          ((cert.certificate))
+          ((/certs/wildcard.private_key))
+          ((/certs/wildcard.certificate))
     release: haproxy
   lifecycle: service
   vm_type: default
@@ -130,7 +130,7 @@ instance_groups:
       static_ips: ((haproxy_ip))
 
 - name: nats-smoke-tests
-  azs: [z2]
+  azs: [z1]
   instances: 1
   jobs:
   - name: smoke-tests
@@ -142,15 +142,15 @@ instance_groups:
   vm_type: default
 
 variables:
-- name: default_ca
+- name: /certs/default_ca
   type: certificate
   options:
     is_ca: true
     common_name: ca
-- name: cert
+- name: /certs/wildcard
   type: certificate
   options:
-    ca: default_ca
+    ca: /certs/default_ca
     common_name: ((SSL_cn))
     alternative_names: ((SSL_alt_names))
 - name: router_status_password

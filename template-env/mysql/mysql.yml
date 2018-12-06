@@ -84,7 +84,7 @@ instance_groups:
             endpoint_password: ((galera_healthcheck_endpoint_password))
 
 - name: proxy
-  instances: 1 #this needs to be 1 due to proxy limitations behing a load balancer
+  instances: 1 #this needs to be 1 due to proxy limitations.  TODO: Implement bosh dns
   azs: [z1]
   networks:
   - name: default
@@ -96,8 +96,10 @@ instance_groups:
     release: cf-mysql
     properties:
       cf_mysql:
+        mysql:
+          port: 3306
         proxy:
-          api_aggregator_port: 8081
+          api_aggregator_port: 8082
           api_port: 8080
           #api_uri: ((mysql_proxy_url))
           api_username: proxy

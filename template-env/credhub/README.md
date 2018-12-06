@@ -1,6 +1,12 @@
 # Deploying Credhub
 You have 2 options here.  You can either choose a cenrtalized database to be shared among compatable reployments or you can deploy the MySQL cluster to the credhub deployment.
 
+I don't think the LDAP option does any good if ACLs are enabled.
+
+No bpm in this deployment.  You must use routing version 0.179.0 as latest.
+
+This is assuming no ACLs will be used.  If you choose to use ACLs LDAP will not work.
+
 ## Components
 ### All-in-one
 Credhub deployment consists of a Credhub/UAA cell, MySQLProxy, 3 or more MySQL database servers, and an arbirtator.
@@ -32,7 +38,6 @@ wget https://bosh.io/d/github.com/cloudfoundry/uaa-release?v=66.0 -O /tmp/uaa.tg
 bosh -e $PCF_ENV upload-release /tmp/uaa.tgz && \
 rm /tmp/uaa.tgz
 ```
-
 ### IPs
 Credhub and MySQLProxy* require static IP addresses in the Bosh deploy network
 
@@ -52,36 +57,34 @@ MySQLProxy* will generate and use its own cert contianing its IP address.  This 
 # Deploy
 
 ```
-PCF_ENV="REPLACE_ME"
+PCF_ENV="xxx"
 bosh -e $PCF_ENV -d credhub deploy ./"$PCF_ENV"/credhub/credhub.yml -o ./"$PCF_ENV"/credhub/operations/ldap.yml -o ./"$PCF_ENV"/credhub/operations/central-db.yml -l ./"$PCF_ENV"/master-params.yml -n
 ```
 
 # Inputs
-
 ## All-in-one
-- credhub_mySQL_proxy_ip
-- credhub_static_ips
-
+credhub_mySQL_proxy_ip
+credhub_static_ips
 ### Centralized database
-- mySQL_proxy_ip
-- credhub_static_ips
+mySQL_proxy_ip
+credhub_static_ips
 
 # CredHub Outputs
-- uaa-jwt
-- uaa-users-admin
-- credhub_uaa_admin_password
-- uaa-login
-- - uaa_encryption_password
-- credhub-encryption-password
-- credhub-admin-client-password
+uaa-jwt
+uaa-users-admin
+credhub_uaa_admin_password
+uaa-login
+uaa_encryption_password
+credhub-encryption-password
+credhub-admin-client-password
 
 ## All-in-one
-- mysql_smoke_tests_db_password
-- my-sql_proxy_api_password
-- galera_healthcheck_endpoint_password
-- galera_healthcheck_db_password
-- cluster_health_password
-- db_admin_password
-- credhub_db_password
-- credhub_uaa_db_password
-- /concourse/concourse_to_credhub_secret
+mysql_smoke_tests_db_password
+mysql_proxy_api_password
+galera_healthcheck_endpoint_password
+galera_healthcheck_db_password
+cluster_health_password
+db_admin_password
+credhub_db_password
+credhub_uaa_db_password
+/concourse/concourse_to_credhub_secret

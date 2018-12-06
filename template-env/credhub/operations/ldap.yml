@@ -11,7 +11,7 @@
     referral: follow
     searchBase: ((ldap_user_search_base_dns))
     searchFilter: samAccountName={0}
-    url: ldap://((ldap_host)):389
+    url: ldap://((ldap_host))
     userDN: ((/ldap_user.username))
     userPassword: ((/ldap_user.password))
     groups:
@@ -31,7 +31,7 @@
   path: /instance_groups/name=credhub/jobs/name=uaa/properties/uaa/scim/external_groups?
   value:
     ldap:
-      ((ldap_group)):
+      ((credhub_ldap_group)):
         - credhub.write
         - credhub.read
         - scim.write

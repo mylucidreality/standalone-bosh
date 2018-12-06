@@ -73,16 +73,14 @@ docker_domain: docker.xxx.xxx.xxx
 docker_persistent_disk: 5120
 DOCKER_S3_BUCKET_NAME: docker-images
 
-atc_instances: 2
-
-web_vm_type: default
-concourse_userid: 
+#Concourse
+atc_static_ips: [x.x.x.x,x.x.x.x]
 concourse_external_host: concourse.xxx.xxx.xxx
-concourse_external_url: https://concourse.xxx.xxx.xxx
-concourse_uaa_host: concourse-uaa.xxx.xxx.xxx
 concourse-ldap-group: 
+atc_instances: 2
+web_vm_type: default
+concourse_userid: concourse
 concourse_db_vm_type: default
-atc_static_ips: []
 concourse_db_persistent_disk_type: 100GB
 
 #Proxy
