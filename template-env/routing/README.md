@@ -5,7 +5,6 @@ NATS_RELEASE="26"
 CF_ROUTING_RELEASE="0.180.0"
 HA_PROXY_RELEASE="8.0.6"
 PCF_ENV="xxx"
-DIRECTOR_IP="x.x.x.x"
 wget https://bosh.io/d/github.com/cloudfoundry/nats-release?v="$NATS_RELEASE" -O /tmp/nats.tgz --no-check-certificate && \
 bosh -e $PCF_ENV upload-release /tmp/nats.tgz && \
 rm /tmp/nats.tgz && \
@@ -25,18 +24,18 @@ bosh -e $PCF_ENV -d routing deploy ./$PCF_ENV/routing/routing.yml -l ./$PCF_ENV/
 ```
 
 # Inputs
-SSL_cn
-SSL_alt_names
-haproxy_ip
-gorouters_ips
-nats_ips
-azs
+- SSL_cn
+- SSL_alt_names
+- haproxy_ip
+- gorouters_ips
+- nats_ips
+- azs
 
 # CredHub Outputs
-/certs/default_ca
-/certs/wildcard
-router_status_password
-router_route_services_secret
-router_stats_password
-nats-credentials
-gorouter_password
+- /certs/default_ca
+- /certs/wildcard
+- router_status_password
+- router_route_services_secret
+- router_stats_password
+- nats-credentials
+- gorouter_password
