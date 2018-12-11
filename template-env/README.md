@@ -165,13 +165,13 @@ credhub get -n /REPLACE_ME/concourse/concourse_user
 - log into main team
 fly -t REPLACE_ME login -c https://concourse.xxx.xxx.xxx -n main -u concourse -p REPLACE_ME
 - Create new team for remote workers
-fly st -t pxe -n REPLACE_ME --local-user=concourse --ldap-group=REPLACE_ME
+fly st -t REPLACE_ME -n REPLACE_ME --local-user=concourse --ldap-group=REPLACE_ME
 - Verify your teams are there
 fly teams -t REPLACE_ME
 
 ### Push pipelines
 - Monitor certificate
-fly sp -t pxe -n pxa sp -p monitor-platform-certs -c ./pipelines/monitor-expiring-certificates/pipeline.yml -l ./master-params/pxa-params.yml
+fly sp -t REPLACE_ME -n pxa sp -p monitor-platform-certs -c ./pipelines/monitor-expiring-certificates/pipeline.yml -l ./master-params/pxa-params.yml
 
 ## Key points
 ### Access standalone credhub
@@ -189,7 +189,7 @@ You will need to retrieve the standalone credhub admin password
 ```credhub delete -n /test```
 
 # Final Design
-<img src="/pxe/images/PXE.jpg" style="width: 800px;"/>
+<img src="/REPLACE_ME/images/REPLACE_ME.jpg" style="width: 800px;"/>
 
 
 # DELETE IT ALL!!!!!!
