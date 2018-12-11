@@ -1,0 +1,30 @@
+
+- type: replace
+  path: /instance_groups/name=bosh/jobs/name=route_registrar?
+  value:
+      name: route_registrar
+      consumes:
+        nats:
+          deployment: routing
+          from: nats
+      properties:
+        route_registrar:
+          routes:
+          - name: uaa
+            port: 8443
+            registration_interval: 4s
+            uris: 
+            - uaa.((system_domain))
+            - "*.uaa.((system_domain))"
+            - login.((system_domain))
+            - "*.login.((system_domain))"
+            - director.((system_domain))
+      release: routing
+
+- type: replace
+  path: /releases/name=routing?
+  value:
+    name: routing
+    version: 0.179.0
+    url: "https://bosh.io/d/github.com/cloudfoundry-incubator/cf-routing-release?v=0.179.0"
+    sha1: "203061d0438ed76f25573080f9d1f73f06de5851"

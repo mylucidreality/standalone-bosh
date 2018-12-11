@@ -28,7 +28,7 @@
   path: /instance_groups/name=bosh/jobs/name=uaa/properties/uaa/scim/external_groups?
   value:
       ldap:
-        TODO:
+        CN=REPLACE_ME,DC=com:
           - bosh.admin
           - cloud_controller.admin
           - bosh.releases.upload
@@ -62,9 +62,9 @@
   path: /instance_groups/name=bosh/jobs/name=uaa/properties/login/prompt?
   value:
       password:
-        text: "Enter password"
+        text: "Enter LDAP password"
       username:
-        text: "Enter UserID"
+        text: "Enter LDAP UserID"
 
 - type: replace
   path: /instance_groups/name=bosh/jobs/name=uaa?/properties/uaa/clients/gorouter?

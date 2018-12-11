@@ -1,0 +1,12 @@
+- type: replace
+  path: /instance_groups/name=db/jobs/name=bbr-atcdb?
+  value:
+    name: bbr-atcdb
+    release: concourse
+    properties:
+      postgresql:
+        database: atc
+        sslmode: disable
+        role:
+          name: concourse
+          password: ((postgres_password))

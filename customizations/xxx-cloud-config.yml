@@ -1,15 +1,15 @@
 azs:
 - cloud_properties:
     datacenters:
-    - name: TODO
+    - name: REPLACE_ME
     - clusters:
-      - TODO
+      - REPLACE_ME
   name: z1
 - cloud_properties:
     datacenters:
-    - name: TODO
+    - name: REPLACE_ME
     - clusters:
-      - TODO
+      - REPLACE_ME
   name: z2
 compilation:
   az: z2
@@ -147,21 +147,21 @@ networks:
     - z1
     - z2
     cloud_properties:
-      name: TODO
+      name: REPLACE_ME
     dns:
-    - TODO
-    gateway: TODO
-    range: TODO
+    - REPLACE_ME
+    gateway: REPLACE_ME
+    range: REPLACE_ME
     reserved:
-    - TODO
-    - TODO
+    - REPLACE_ME
+    - REPLACE_ME
     static:
-    - TODO
-    - TODO
-    - TODO
-    - TODO
-    - TODO
-    - TODO    
+    - REPLACE_ME
+    - REPLACE_ME
+    - REPLACE_ME
+    - REPLACE_ME
+    - REPLACE_ME
+    - REPLACE_ME    
   type: manual
 vm_extensions:
 - name: cf-router-network-properties

@@ -1,0 +1,15 @@
+- type: replace
+  path: /instance_groups/name=db/jobs/name=bbr-uaadb?
+  value:
+    name: bbr-uaadb
+    release: uaa
+    properties:
+      uaadb:
+        db_scheme: postgresql
+        databases:
+        - tag: uaa
+          name: uaa
+        roles:
+        - tag: admin
+          name: uaa
+          password: ((uaa-db-password))

@@ -1,0 +1,21 @@
+- type: replace
+  path: /instance_groups/name=grafana/jobs/name=grafana/properties/env?
+  value:
+    http_proxy: ((http_proxy_url))
+    https_proxy: ((http_proxy_url))
+    no_proxy: ((no_proxy))
+
+- type: replace
+  path: /instance_groups/name=prometheus2/jobs/name=prometheus2/properties/prometheus/web?/external_url?
+  value: prometheus.((system_domain))
+
+- type: replace
+  path: /instance_groups/name=grafana/jobs/name=grafana/properties/grafana/prometheus?/use_external_url?
+  value: false
+
+- type: replace
+  path: /instance_groups/name=prometheus2/jobs/name=prometheus2/properties?/env?
+  value:
+    http_proxy: ((http_proxy_url))
+    https_proxy: ((http_proxy_url))
+    no_proxy: ((no_proxy))

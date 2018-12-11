@@ -15,7 +15,7 @@ instance_groups:
           port: 9000
           registration_interval: 20s
           uris: 
-          - ((minio_url))
+          - minio.((system_domain))
     release: routing
   - name: minio-server
     properties:
@@ -53,6 +53,7 @@ instance_groups:
   stemcell: default
   vm_type: default
 name: minio
+
 releases:
 - name: minio
   version: latest

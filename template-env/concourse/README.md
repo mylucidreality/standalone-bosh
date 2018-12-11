@@ -7,7 +7,7 @@ DIRECTOR_IP="x.x.x.x"
 XENIAL_STEMCELL_VERSION="97.12"
 GARDEN_RUNC_RELEASE="1.16.3"
 CONCOURSE_RELEASE="4.2.1"
-POSTGRES_RELEASE="28"
+POSTGRES_RELEASE="32"
 wget https://s3.amazonaws.com/bosh-core-stemcells/vsphere/bosh-stemcell-"$XENIAL_STEMCELL_VERSION"-vsphere-esxi-ubuntu-xenial-go_agent.tgz -O /tmp/bosh-stemcell-"$XENIAL_STEMCELL_VERSION"-vsphere-esxi-ubuntu-xenial-go_agent.tgz --no-check-certificate && \
 bosh -e $PCF_ENV upload-stemcell /tmp/bosh-stemcell-"$XENIAL_STEMCELL_VERSION"-vsphere-esxi-ubuntu-xenial-go_agent.tgz && \
 rm /tmp/bosh-stemcell-"$XENIAL_STEMCELL_VERSION"-vsphere-esxi-ubuntu-xenial-go_agent.tgz && \
@@ -29,7 +29,7 @@ rm /tmp/routing.tgz
 *** With credhub integration, proxy, and ldap authenticatin
 ```
 PCF_ENV="xxx"
-bosh -e $PCF_ENV -d concourse deploy ./$PCF_ENV/concourse/concourse.yml -o ./$PCF_ENV/concourse/operations/credhub.yml -o ./$PCF_ENV/concourse/operations/ldap.yml -o ./$PCF_ENV/concourse/operations/proxy.yml -l ./$PCF_ENV/master-params.yml -n
+bosh -e $PCF_ENV -d concourse deploy ./$PCF_ENV/concourse/concourse.yml -o ./$PCF_ENV/concourse/ops/credhub.yml -o ./$PCF_ENV/concourse/ops/ldap.yml -o ./$PCF_ENV/concourse/ops/proxy.yml -l ./$PCF_ENV/master-params.yml -n
 ```
 
 ## Inputs
@@ -37,7 +37,6 @@ bosh -e $PCF_ENV -d concourse deploy ./$PCF_ENV/concourse/concourse.yml -o ./$PC
 - concourse_db_persistent_disk_type
 - concourse_db_vm_type
 - concourse_userid
-- concourse_external_host
 - atc_instances
 - web_vm_type
 - atc_static_ips

@@ -1,0 +1,91 @@
+#Release versions
+uaa_release_version: '66.0'
+routing_version: 0.180.0
+minio_version: "2018-07-31T02-11-47Z"
+backup_restore_sdk_release_version: 1.9.0
+garden_runc_version: '1.16.3'
+postgres_version: '30'
+uaa_sha: NA
+credhub_sha: NA
+backup_restore_sdk_sha: NA
+
+#General Config
+azs: [z1, z1]
+
+#Bosh config
+director_name: REPLACE_ME
+system_domain: "REPLACE_ME"
+internal_cidr: "xx.xx.xx.x/24"
+internal_gw: "xx.xx.xx.xx"
+internal_ip: "xx.xx.xx.xx"
+network_name: REPLACE_ME
+vcenter_dc: "REPLACE_ME"
+vcenter_ds: REPLACE_ME
+vcenter_ip: "xx.xx.xx.xx"
+vcenter_user: REPLACE_ME
+vcenter_password: REPLACE_ME
+vcenter_vms: Pivotal/xxx
+vcenter_disks: Pivotal/xxx/pcf_disk_bosh
+vcenter_cluster: REPLACE_ME
+internal_dns: [xx.xx.xx.xx,xx.xx.xx.xx,xx.xx.xx.xx]
+vcenter_templates: Pivotal/xxx/templates
+vcenter_rp:
+internal_ntp: ["xx.xx.xx.xx"]
+uaa_bosh_exporter_client_secret: REPLACE_ME
+uaa_credhub_exporter_client_secret: REPLACE_ME
+
+#SMTP
+smtp_server: REPLACE_ME
+smtp_from: xxx@REPLACE_ME.com
+smtp_from_name: "REPLACE_ME"
+
+#Routing
+nats_ips: [xx.xx.xx.xx,xx.xx.xx.xx]
+gorouters_ips: [xx.xx.xx.xx,xx.xx.xx.xx]
+haproxy_ip: [xx.xx.xx.xx]
+SSL_alt_names: ['*.xxx.xxx.xxx', director.xxx.xxx.xxx, credhub.xxx.xxx.xxx, '*.service.cf.internal', "Director IP", "Creduhb IP", "MySQL IP"]
+SSL_cn: '*.xxx.xxx.xxx'
+
+#MySQL
+mySQL_proxy_ip: xx.xx.xx.xx
+
+#Credhub
+credhub_static_ips: xx.xx.xx.xx
+credhub_mySQL_proxy_ip: xx.xx.xx.xx
+credhub_ldap_group: "CN=REPLACE_ME"
+
+#LDAP
+ldap_bind_dn: "CN=REPLACE_ME"
+ldap_group_search_base_dns: "OU=Groups,DC=REPLACE_ME"
+ldap_host: "REPLACE_ME"
+ldap_user_search_base_dns: "OU=Associates,DC=REPLACE_ME"
+ldap_group: "CN=REPLACE_ME"
+#bosh.yml requires these named vars
+ldap_user_dn: "CN=REPLACE_ME"
+ldap_user_pass: "REPLACE_ME"
+
+#Prometheus Config
+prometheus_url: prometheus.xxx.xxx.xxx
+skip_ssl_verify: true
+probe_endpoints: [https://xxx.xxx.xxx.xxx,https://xxx.xxx.xxx.xxx/api/vault/healthcheck]
+
+#Minio
+minio_accesskey: REPLACE_ME
+
+#Docker
+docker_persistent_disk: 5120
+DOCKER_S3_BUCKET_NAME: REPLACE_ME
+
+#Concourse
+atc_static_ips: [xx.xx.xx.xx,xx.xx.xx.xx]
+concourse-ldap-group: REPLACE_ME #short name ie. My-PCF-Admin-Group
+atc_instances: 2
+web_vm_type: default
+concourse_userid: concourse
+concourse_db_vm_type: default
+concourse_db_persistent_disk_type: 100GB
+
+#Proxy
+http_proxy_url: xxx.xxx.xxx:XXXX
+https_proxy_url: xxx.xxx.xxx:XXXX
+no_proxy: ["localhost","127.0.0.1","xxx.xxx.xxx"]

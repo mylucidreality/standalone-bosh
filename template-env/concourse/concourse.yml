@@ -3,13 +3,15 @@ name: concourse
 
 releases:
 - name: concourse
-  version: ((concourse_version))
+  version: 4.2.1
 - name: garden-runc
   version: ((garden_runc_version))
 - name: postgres
   version: latest
 - name: routing
-  version: 0.179.0
+  version: latest
+- name: bpm
+  version: latest
 
 stemcells:
 - alias: xenial
@@ -44,7 +46,7 @@ instance_groups:
         - name: concourse
           port: 8080
           registration_interval: 20s
-          uris: [((concourse_external_host))]
+          uris: [concourse.((system_domain))]
     release: routing
   - name: atc
     release: concourse
@@ -57,7 +59,7 @@ instance_groups:
       bind_port: 8080
       tls_bind_port: 443
       container_placement_strategy: random
-      external_url: https://((concourse_external_host))
+      external_url: https://concourse.((system_domain))
       log_level: debug
       main_team:
         auth:

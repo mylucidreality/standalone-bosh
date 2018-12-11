@@ -13,7 +13,7 @@ stemcells:
 
 instance_groups:
   - azs: ((azs))
-    instances: 2
+    instances: 1
     jobs:
     - name: route_registrar
       release: routing
@@ -27,7 +27,7 @@ instance_groups:
             - name: docker-registry
               port: 5000
               registration_interval: 20s
-              uris: [((docker_domain))]
+              uris: [docker.((system_domain))]
         release: routing
     - name: registry
       release: docker-registry
@@ -47,14 +47,14 @@ instance_groups:
             maxmemory: 2g
         registry:
           bind: ''
-          endpoint: https://((docker_domain))
+          endpoint: https://docker.((system_domain))
           port: 5000
           storage:
             s3:
               accesskey: ((minio_accesskey))
               bucket: ((DOCKER_S3_BUCKET_NAME))
               region: Standard
-              regionendpoint: ((minio_url))
+              regionendpoint: minio.((system_domain))
               secretkey: ((minio_accesskey))
               secure: false
           storage_delete: true

@@ -1,0 +1,45 @@
+#Delete
+- type: remove
+  path: /instance_groups/name=database
+
+- type: remove
+  path: /instance_groups/name=grafana/jobs/name=grafana/properties/grafana/prometheus/dashboard_folders/name=PostgreSQL
+
+- type: remove
+  path: /variables/name=postgres_grafana_password
+
+- type: remove
+  path: /releases/name=postgres
+
+# - type: remove
+#   path: /instance_groups/name=prometheus2/jobs/name=prometheus2/properties/prometheus/rule_files
+
+- type: remove
+  path: /instance_groups/name=prometheus2/jobs/name=postgres_alerts
+
+- type: remove
+  path: /instance_groups/name=grafana/jobs/name=postgres_dashboards
+
+#add
+- type: replace
+  path: /instance_groups/name=grafana/jobs/name=grafana/properties/grafana/database?
+  value:
+    host: ((mySQL_proxy_ip))
+    log_queries: true
+    server_cert_name: "*."((system_domain))
+    type: mysql
+    port: 3306
+    password: ((/database/grafana_db_password))
+    name: grafana
+    user: grafana
+    ssl_mode: false
+
+- type: replace
+  path: /instance_groups/name=grafana/jobs/name=grafana/properties/grafana/session?
+  value:
+    provider_config: "'grafana:((/database/grafana_db_password))@tcp(((mySQL_proxy_ip)):3306)/grafana'"
+    provider: mysql
+    provider_port: 3306
+    provider_password: ((/database/grafana_db_password))
+    provider_name: grafana
+    provider_user: grafana

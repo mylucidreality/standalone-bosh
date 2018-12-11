@@ -106,17 +106,17 @@ instance_groups:
           prepend_instance_index: true
           registration_interval: 10s
           uris:
-          - ((credhub_mysql_proxy_url))
+          - proxy-mysql.((system_domain))
         - name: cf-mysql-proxy-aggregator
           port: 8082
           registration_interval: 10s
           uris:
-          - ((credhub_mysql_proxy_url))
+          - proxy-mysql.((system_domain))
         - name: credhub-mysql
           port: 3306
           registration_interval: 10s
           uris:
-          - ((credhub_mysql_proxy_url))
+          - proxy-mysql.((system_domain))
   - name: proxy
     release: cf-mysql
     properties:
@@ -124,7 +124,7 @@ instance_groups:
         proxy:
           api_aggregator_port: 8081
           api_port: 8080
-          api_uri: ((credhub_mysql_proxy_url))
+          api_uri: proxy-mysql.((system_domain))
           api_username: proxy
           api_password: ((mysql_proxy_api_password))
           port: 3306
@@ -214,12 +214,12 @@ instance_groups:
             port: 8844
             registration_interval: 20s
             uris: 
-            - ((credhub_url))
+            - credhub.((system_domain))
           - name: uaa
             port: 8443
             registration_interval: 20s
             uris: 
-            - ((credhub_uaa_url))
+            - credhub-uaa.((system_domain))
 
   - name: uaa
     release: uaa
@@ -228,7 +228,7 @@ instance_groups:
         enabled: false
       uaa:
         ca_cert: ((/certs/default_ca.certificate))
-        url: https://((credhub_uaa_url))
+        url: https://credhub-uaa.((system_domain))
         catalina_opts: -Djava.security.egd=file:/dev/./urandom -Xmx768m -XX:MaxMetaspaceSize=256m
         log_level: debug
         scim:
@@ -324,7 +324,7 @@ instance_groups:
         port: 8844
         authentication:
           uaa:
-            url: https://((credhub_uaa_url))
+            url: https://credhub-uaa.((system_domain))
             verification_key: ((uaa-jwt.public_key))
             ca_certs:
             - ((/certs/wildcard.certificate))

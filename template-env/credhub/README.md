@@ -57,8 +57,8 @@ MySQLProxy* will generate and use its own cert contianing its IP address.  This 
 # Deploy
 
 ```
-PCF_ENV="xxx"
-bosh -e $PCF_ENV -d credhub deploy ./"$PCF_ENV"/credhub/credhub.yml -o ./"$PCF_ENV"/credhub/operations/ldap.yml -o ./"$PCF_ENV"/credhub/operations/central-db.yml -l ./"$PCF_ENV"/master-params.yml -n
+PCF_ENV="stratus"
+bosh -e $PCF_ENV -d credhub deploy ./"$PCF_ENV"/credhub/credhub.yml -o ./"$PCF_ENV"/credhub/ops/ldap.yml -o ./"$PCF_ENV"/credhub/ops/central-db.yml -l ./"$PCF_ENV"/master-params.yml -n
 ```
 
 # Inputs
