@@ -93,6 +93,8 @@ instance_groups:
               provider_name: grafana
               provider_user: grafana
               provider_password: ((postgres_grafana_password))
+            server:
+              domain: grafana.((system_domain))
             security:
               admin_user: admin
               admin_password: ((grafana_password))
