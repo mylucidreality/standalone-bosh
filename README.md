@@ -48,7 +48,7 @@ gem install yajl-ruby
 sudo apt-get install -y build-essential zlibc zlib1g-dev ruby ruby-dev openssl libxslt-dev libxml2-dev libssl-dev libreadline7 libreadline6-dev libyaml-dev libsqlite3-dev sqlite3
 ```
 
-# Automate Install
+# Automated Install
 The goal of this projewct was to produce an entire bosh environemnt using infrastructure as code.
 - add your customizations to "REPLACE_ME" in
  - ./env/build-central-db.sh
@@ -58,37 +58,37 @@ The goal of this projewct was to produce an entire bosh environemnt using infras
 - Decide if you want a central MySQL db or dispersed DB instances
 - Run either ./env/build.sh or ./env/build-central-db.sh
 
-#Post-deploy
+# Post-deploy
 ## Prometheus
 Confiure your remote Prometheus data sources
 
 ## Concourse
 ### Create and configure concourse teams
 - Get username and password from credhub
-credhub get -n /REPLACE_ME/concourse/concourse_user
+```credhub get -n /REPLACE_ME/concourse/concourse_user```
 - log into main team
-fly -t REPLACE_ME login -c https://concourse.xxx.xxx.xxx -n main -u concourse -p REPLACE_ME
+```fly -t REPLACE_ME login -c https://concourse.xxx.xxx.xxx -n main -u concourse -p REPLACE_ME```
 - Create new team for remote workers
-fly st -t REPLACE_ME -n REPLACE_ME --local-user=concourse --ldap-group=REPLACE_ME
+```fly st -t REPLACE_ME -n REPLACE_ME --local-user=concourse --ldap-group=REPLACE_ME```
 - Verify your teams are there
-fly teams -t REPLACE_ME
+```fly teams -t REPLACE_ME```
 
 ### Push pipelines
 - Monitor certificate
-fly sp -t REPLACE_ME -n pxa sp -p monitor-platform-certs -c ./pipelines/monitor-expiring-certificates/pipeline.yml -l ./master-params/pxa-params.yml
+```fly sp -t REPLACE_ME -n pxa sp -p monitor-platform-certs -c ./pipelines/monitor-expiring-certificates/pipeline.yml -l ./master-params/pxa-params.yml```
 
 ## Key points
 ### Access standalone credhub
 You will need to retrieve the standalone credhub admin password
-	- Log into director
+- Log into director
 ```credhub login --client-name=credhub-admin --client-secret="PASSWORD FOUND IN DIRECTOR VARS FILE" -s DIRECTOR:8844 --skip-tls-validation```
-	- Find the location of the creds
+- Find the location of the creds
 ```credhub find -n credhub-admin-client-password```
-	- copy the password
+- copy the password
 ```credhub get -n /xxx/credhub/credhub-admin-client-password```
-	- log into standalone credhub
+- log into standalone credhub
 ```credhub login --client-name=credhub_admin_client --client-secret="PASSWORD FROM ABOVE" -s CREDHUB_IP:8844 --skip-tls-validation```
-	- Test access
+- Test access
 ```credhub set -t value -n /test```
 ```credhub delete -n /test```
 
@@ -101,11 +101,11 @@ You will need to retrieve the standalone credhub admin password
 
 
 # DELETE IT ALL!!!!!!
-Delete it and trt again
+Delete it and do it again
 
 # TODO
-I still need to add gogs
-I need to get the central MySQL DB to work with Prometheus
-I need to add a bosh deployed jumpbox to the process
-I need to add BBR into deployments where its an option
-I need to see where bosh DNS can improve my design
+- I still need to add gogs
+- I need to get the central MySQL DB to work with Prometheus
+- I need to add a bosh deployed jumpbox to the process
+- I need to add BBR into deployments where its an option
+- I need to see where bosh DNS can improve my design
