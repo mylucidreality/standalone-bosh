@@ -1,9 +1,9 @@
 #!/bin/bash
 
 set -e
-PCF_ENV="stratus"
-DIRECTOR_IP="xx.xx.xx.xx"
-# DIRECTOR_NAME (ie bosh-REPLACE_MEms)
+PCF_ENV="REPLACE_ME"
+DIRECTOR_IP="REPLACE_ME"
+# DIRECTOR_NAME (ie bosh-xyz)
 DNS_RELEASE="1.10.0"
 BPM_RELEASE="1.0.0"
 NATS_RELEASE="26"
