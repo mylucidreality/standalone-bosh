@@ -29,7 +29,7 @@ rm /tmp/routing.tgz
 *** With credhub integration, proxy, and ldap authenticatin
 ```
 PCF_ENV="xxx"
-bosh -e $PCF_ENV -d concourse deploy ./$PCF_ENV/concourse/concourse.yml -o ./$PCF_ENV/concourse/ops/credhub.yml -o ./$PCF_ENV/concourse/ops/ldap.yml -o ./$PCF_ENV/concourse/ops/proxy.yml -l ./$PCF_ENV/master-params.yml -n
+bosh -e $PCF_ENV -d concourse deploy ./env/concourse/concourse.yml -o ./env/concourse/ops/credhub.yml -o ./env/concourse/ops/ldap.yml -o ./env/concourse/ops/proxy.yml -l ./customizations/"$PCF_ENV"-params.yml -n
 ```
 
 ## Inputs
