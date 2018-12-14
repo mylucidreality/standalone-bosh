@@ -55,7 +55,7 @@ instance_groups:
               bucket: ((DOCKER_S3_BUCKET_NAME))
               region: Standard
               regionendpoint: minio.((system_domain))
-              secretkey: ((minio_accesskey))
+              secretkey: ((/minio_secretkey))
               secure: false
           storage_delete: true
     stemcell: default

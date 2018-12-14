@@ -21,7 +21,7 @@ instance_groups:
     properties:
       credential:
         accesskey: ((minio_accesskey))
-        secretkey: ((minio_secretkey))
+        secretkey: ((/minio_secretkey))
       port: 9000
     provides:
       minio-server:
@@ -69,7 +69,7 @@ update:
   max_in_flight: 1
   update_watch_time: 1000-30000
 variables:
-- name: minio_secretkey
+- name: /minio_secretkey
   type: password
   options:
     length: 16
