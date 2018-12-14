@@ -11,7 +11,7 @@ rm /tmp/cf-mysql.tgz
 
 ```
 PCF_ENV="xxx"
-bosh -e $PCF_ENV -d mysql deploy ./$PCF_ENV/mysql/mysql.yml -l ./$PCF_ENV/master-params.yml -n
+bosh -e $PCF_ENV -d mysql deploy ./env/mysql/mysql.yml -l ./customizations/"$PCF_ENV"-params.yml -n
 ```
 
 # Inputs

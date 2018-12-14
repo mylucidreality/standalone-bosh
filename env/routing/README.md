@@ -20,7 +20,7 @@ rm /tmp/haproxy.tgz
 
 ```
 PCF_ENV="xxx"
-bosh -e $PCF_ENV -d routing deploy ./$PCF_ENV/routing/routing.yml -l ./$PCF_ENV/master-params.yml -n
+bosh -e $PCF_ENV -d routing deploy ./env/routing/routing.yml -l ./customizations/"$PCF_ENV"-params.yml -n
 ```
 
 # Inputs

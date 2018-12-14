@@ -193,7 +193,7 @@ echo -e "=============================="
 echo -e "Deploying Routing components  "
 echo -e "=============================="
 echo -e "$(tput sgr0)"
-bosh -e $PCF_ENV -d routing deploy ./$PCF_ENV/routing/routing.yml -l ./$PCF_ENV/master-params.yml -n
+bosh -e $PCF_ENV -d routing deploy ./env/routing/routing.yml -l ./customizations/"$PCF_ENV"-params.yml -n
 
 
 # Deploy MySQL
@@ -202,7 +202,7 @@ echo -e "=============================="
 echo -e "Deploying MySQL Cluster       "
 echo -e "=============================="
 echo -e "$(tput sgr0)"
-bosh -e $PCF_ENV -d mysql deploy ./$PCF_ENV/mysql/mysql.yml -l ./$PCF_ENV/master-params.yml -n
+bosh -e $PCF_ENV -d mysql deploy ./env/mysql/mysql.yml -l ./customizations/"$PCF_ENV"-params.yml -n
 
 # Deploy Credhub
 echo -e "$(tput rev)"
@@ -210,7 +210,7 @@ echo -e "=============================="
 echo -e "Deploying Credhub             "
 echo -e "=============================="
 echo -e "$(tput sgr0)"
-bosh -e $PCF_ENV -d credhub deploy ./$PCF_ENV/credhub/credhub.yml -o ./$PCF_ENV/credhub/ops/ldap.yml -o ./$PCF_ENV/credhub/ops/central-db.yml -l ./$PCF_ENV/master-params.yml -n
+bosh -e $PCF_ENV -d credhub deploy ./env/credhub/credhub.yml -o ./env/credhub/ops/ldap.yml -o ./env/credhub/ops/central-db.yml -l ./customizations/"$PCF_ENV"-params.yml -n
 
 #Deploy Concourse
 echo -e "$(tput rev)"
@@ -218,7 +218,7 @@ echo -e "=============================="
 echo -e "Deploying Concourse           "
 echo -e "=============================="
 echo -e "$(tput sgr0)"
-bosh -e $PCF_ENV -d concourse deploy ./$PCF_ENV/concourse/concourse.yml -o ./$PCF_ENV/concourse/ops/credhub.yml -o ./$PCF_ENV/concourse/ops/proxy.yml -o ./$PCF_ENV/concourse/ops/ldap.yml -l ./$PCF_ENV/master-params.yml -n
+bosh -e $PCF_ENV -d concourse deploy ./env/concourse/concourse.yml -o ./env/concourse/ops/credhub.yml -o ./env/concourse/ops/proxy.yml -o ./env/concourse/ops/ldap.yml -l ./customizations/"$PCF_ENV"-params.yml -n
 
 #Deploy Minio/Docker-Registry
 echo -e "$(tput rev)"
@@ -226,8 +226,8 @@ echo -e "====================================="
 echo -e "Deploying Minio and Docker-Registry  "
 echo -e "====================================="
 echo -e "$(tput sgr0)"
-bosh -e $PCF_ENV deploy -d minio ./$PCF_ENV/minio/minio.yml -l ./$PCF_ENV/master-params.yml -n && \
-bosh -e $PCF_ENV deploy -d docker-registry ./$PCF_ENV/docker-registry/docker.yml -l ./$PCF_ENV/master-params.yml -n
+bosh -e $PCF_ENV deploy -d minio ./env/minio/minio.yml -l ./customizations/"$PCF_ENV"-params.yml -n && \
+bosh -e $PCF_ENV deploy -d docker-registry ./env/docker-registry/docker.yml -l ./customizations/"$PCF_ENV"-params.yml -n
 
 #Deploy Prometheus and Grafana With LDAP and HTTP Probe
 echo -e "$(tput rev)"
@@ -235,7 +235,7 @@ echo -e "======================"
 echo -e "Deploying Prometheus  "
 echo -e "======================"
 echo -e "$(tput sgr0)"
-# Central DB not working right now -o ./$PCF_ENV/prometheus/ops/central-db.yml \
+# Central DB not working right now -o ./env/prometheus/ops/central-db.yml \
 #  bosh -e $PCF_ENV -d prometheus deploy ./env/prometheus/prometheus.yml \
 #  -o ./env/prometheus/ops/monitor-bosh.yml \
 #  -o ./env/prometheus/ops/monitor-http-probe.yml \
