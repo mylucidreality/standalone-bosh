@@ -59,7 +59,7 @@ ldap_bind_dn: "CN=REPLACE_ME"
 ldap_group_search_base_dns: "OU=Groups,DC=REPLACE_ME"
 ldap_host: "REPLACE_ME"
 ldap_user_search_base_dns: "OU=Associates,DC=REPLACE_ME"
-ldap_group: "CN=REPLACE_ME"
+grafana_group_dn: "CN=REPLACE_ME"
 #bosh.yml requires these named vars
 ldap_user_dn: "CN=REPLACE_ME"
 ldap_user_pass: "REPLACE_ME"

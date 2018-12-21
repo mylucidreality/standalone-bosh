@@ -24,7 +24,7 @@
       email =  "mail"
 
       [[servers.group_mappings]]
-      group_dn = "((ldap_group))"
+      group_dn = "((grafana_group_dn))"
       org_role = "Admin"
 
     enabled: true
