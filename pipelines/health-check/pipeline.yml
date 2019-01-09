@@ -1,0 +1,55 @@
+resources:
+- name: pcf-health-check
+  type: git
+  source:
+    uri: ((swiss_army_git))
+    private_key: ((git_private_key.private_key))
+    skip_ssl_verification: true
+
+- name: schedule
+  type: time
+  source:
+    start: ((health-check-schedule-start))
+    stop: ((health-check-schedule-stop))
+    location: America/New_York
+    interval: ((health-check-interval))
+- name: send-an-email
+  type: email
+  source:
+    smtp:
+      host: ((smtp-host))
+      port: "25"
+      skip_ssl_validation: true
+      anonymous: true
+    from: ((email-from))
+    to: [ ((email-to)) ]
+
+resource_types:
+- name: email
+  type: docker-image
+  source:
+    repository: ((email-repo))
+    tag: ((docker-tag))
+    insecure_registries: [ ((docker-registry)) ]
+
+jobs:
+- name: scheduled-smoketests
+  plan:
+  - get: schedule
+    trigger: ((trigger-schedule))
+  - get: pcf-health-check
+  - task: run-smoke-tests
+    file: pcf-health-check/tasks/health-check/task.yml
+    params:
+      BOSH_ADMIN_CLIENT: ((BOSH_ADMIN_CLIENT))
+      PCF_SCRT: ((PCF_SCRT))
+      PCF_URL: ((PCF_URL))
+      PCF_CERT: ((PCF_CERT))
+      VERBOSE_TEST: ((VERBOSE_TEST))
+      PCF_ENV: ((PCF_ENV))
+  on_failure:
+    put: send-an-email
+    params:
+      headers: email/smoketestheaders.txt
+      subject: email/smoketestsubject.txt
+      body: email/smoketest.html

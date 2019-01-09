@@ -16,6 +16,9 @@ instance_groups:
         release: prometheus
         properties:
           prometheus:
+            storage:
+              tsdb:
+                retention: ((prometheus_retention))
             rule_files:
               - /var/vcap/jobs/postgres_alerts/*.alerts.yml
               - /var/vcap/jobs/prometheus_alerts/*.alerts.yml

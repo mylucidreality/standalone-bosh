@@ -1,0 +1,38 @@
+resources:
+- name: pcf-run-report
+  type: git
+  source:
+    uri: ((swiss_army_git))
+    private_key: ((git_private_key))
+    branch: master
+    skip_ssl_verification: true
+
+- name: schedule
+  type: time
+  source:
+   start: ((env-report-schedule-start))
+   stop: ((env-report-schedule-stop))
+   location: America/New_York
+   interval: ((env-report-interval))
+
+jobs:
+- name: gather-data
+  plan:
+  - get: schedule
+    trigger: true
+  - get: pcf-run-report
+  - task: generate-files
+    file: pcf-run-report/tasks/env-report/task.yml
+    params:
+      BOSH_ADMIN_CLIENT: ((BOSH_ADMIN_CLIENT))
+      PCF_SCRT: ((PCF_SCRT))
+      PCF_URL: ((PCF_URL))
+      PCF_CERT: ((PCF_CERT))
+      PCF_ENV: ((PCF_ENV))
+      RPT_GIT: ((RPT-GIT))
+      GIT_CERT: ((git_private_key))
+      PCF_DIRECTOR: ((PCF_DIRECTOR))
+      CF_API: ((CF_API))
+      OPSMAN_DOMAIN_OR_IP_ADDRESS: ((opsman_url))
+      OPSMAN_USERNAME: ((opsman_admin.username))
+      OPSMAN_PASSWORD: ((opsman_admin.password))

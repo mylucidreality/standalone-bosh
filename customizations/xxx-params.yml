@@ -67,6 +67,7 @@ ldap_user_pass: "REPLACE_ME"
 #Prometheus Config
 prometheus_url: prometheus.xxx.xxx.xxx
 skip_ssl_verify: true
+prometheus_retention: REPLACE_ME
 probe_endpoints: [https://xxx.xxx.xxx.xxx,https://xxx.xxx.xxx.xxx/api/vault/healthcheck]
 
 #Minio
