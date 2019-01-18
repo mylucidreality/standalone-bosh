@@ -2,8 +2,8 @@ resources:
 - name: pcf-health-check
   type: git
   source:
-    uri: ((swiss_army_git))
-    private_key: ((git_private_key.private_key))
+    uri: "https://github.com/mylucidreality/standalone-bosh.git"
+    private_key: ((git_key.private_key))
     skip_ssl_verification: true
 
 - name: schedule
@@ -24,11 +24,17 @@ resources:
     from: ((email-from))
     to: [ ((email-to)) ]
 
+- name: pipeline_image
+  type: docker-image
+  source:
+    repository: ((docker-registry))/concourse/bosh-cli
+    insecure_registries: [ ((docker-registry)) ]
+
 resource_types:
 - name: email
   type: docker-image
   source:
-    repository: ((email-repo))
+    repository: pcfseceng/email-resource
     tag: ((docker-tag))
     insecure_registries: [ ((docker-registry)) ]
 
@@ -38,7 +44,9 @@ jobs:
   - get: schedule
     trigger: ((trigger-schedule))
   - get: pcf-health-check
+  - get: pipeline_image
   - task: run-smoke-tests
+    image: pipeline_image
     file: pcf-health-check/tasks/health-check/task.yml
     params:
       BOSH_ADMIN_CLIENT: ((BOSH_ADMIN_CLIENT))

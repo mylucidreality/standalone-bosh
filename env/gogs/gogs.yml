@@ -3,9 +3,9 @@ name: gogs
 
 instance_groups:
 - name: gogs
-  azs: [z1]
+  azs: ((azs))
   instances: 1
-  vm_type: default
+  vm_type: large
   stemcell: default
   persistent_disk: 10_240
   networks: [{name: default}]
@@ -14,8 +14,28 @@ instance_groups:
     release: gogs
   - name: gogs
     release: gogs
+    properties:
+      gogs:
+        admin: ((gogs_user.username))
+        password: ((gogs_user.password))
+        email: "pcfadmins@fiservcorp.onmicrosoft.com"
+        port: 8080
+        tls_cert: ((gogs-tls.certificate))
+        tls_key: ((gogs-tls.private_key))
+        secret_key: ((gogs-secret-key))
+        domain: gogs.((system_domain))
+      databases:
+        roles:
+          - tag: gogs
+            name: gogs
+            password: ((postgres-password))
+        databases:
+          - tag: gogs
+            name: gogsdb
+            citext: true
+
 - name: sanity-test
-  azs: [z1]
+  azs: ((azs))
   instances: 1
   lifecycle: errand
   vm_type: default
@@ -24,31 +44,23 @@ instance_groups:
   jobs:
   - name: sanity_test
     release: gogs
+    properties:
+      gogs:
+        admin: ((gogs_user.username))
+        password: ((gogs_user.password))
+        domain: gogs.((system_domain))
 
-properties:
-  gogs:
-    admin:    gogs
-    password: ((gogs-password))
-    tls_cert: ((gogs-tls.certificate))
-    tls_key: ((gogs-tls.private_key))
-    secret_key: ((gogs-secret-key))
-  databases:
-    roles:
-      - tag: gogs
-        name: gogs
-        password: ((postgres-password))
-    databases:
-      - tag: gogs
-        name: gogsdb
-        citext: true
+
 
 variables:
 - name: postgres-password
   type: password
 - name: gogs-secret-key
   type: password
-- name: gogs-password
-  type: password
+- name: gogs_user
+  options:
+    username: gogs
+  type: user
 - name: gogs-ca
   type: certificate
   options:
@@ -80,9 +92,4 @@ stemcells:
 
 releases:
 - name: gogs
-  sha1: 1a7e73bf3ec748f83d1c0a0832343b032f3887df
-  stemcell:
-    os: ubuntu-trusty
-    version: "3586.42"
-  url: https://s3.amazonaws.com/gogs-boshrelease/compiled-releases/gogs/gogs-5.4.0-ubuntu-trusty-3586.42-20180920-185253-824628073-20180920185257.tgz
-  version: 5.4.0
+  version: latest

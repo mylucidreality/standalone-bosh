@@ -2,18 +2,24 @@ resources:
 - name: pcf-run-report
   type: git
   source:
-    uri: ((swiss_army_git))
-    private_key: ((git_private_key))
+    uri: "https://github.com/mylucidreality/standalone-bosh.git"
+    private_key: ((git_key.private_key))
     branch: master
     skip_ssl_verification: true
 
 - name: schedule
   type: time
   source:
-   start: ((env-report-schedule-start))
-   stop: ((env-report-schedule-stop))
+   start: ((env_report_schedule_start))
+   stop: ((env_report_schedule_stop))
    location: America/New_York
-   interval: ((env-report-interval))
+   interval: ((env_report_interval))
+
+- name: pipeline_image
+  type: docker-image
+  source:
+    repository: ((docker-registry))/clitools
+    insecure_registries: [ ((docker-registry)) ]
 
 jobs:
 - name: gather-data
@@ -21,8 +27,10 @@ jobs:
   - get: schedule
     trigger: true
   - get: pcf-run-report
+  - get: pipeline_image
   - task: generate-files
     file: pcf-run-report/tasks/env-report/task.yml
+    image: pipeline_image
     params:
       BOSH_ADMIN_CLIENT: ((BOSH_ADMIN_CLIENT))
       PCF_SCRT: ((PCF_SCRT))
@@ -30,7 +38,7 @@ jobs:
       PCF_CERT: ((PCF_CERT))
       PCF_ENV: ((PCF_ENV))
       RPT_GIT: ((RPT-GIT))
-      GIT_CERT: ((git_private_key))
+      GIT_CERT: ((git_key.private_key))
       PCF_DIRECTOR: ((PCF_DIRECTOR))
       CF_API: ((CF_API))
       OPSMAN_DOMAIN_OR_IP_ADDRESS: ((opsman_url))

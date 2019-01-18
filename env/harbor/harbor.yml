@@ -1,0 +1,117 @@
+---
+name: harbor-deployment
+
+releases:
+- name: harbor-container-registry
+  version: 1.6.2
+  sha1: 5bb63d9b1cac2ae24e601d28c057af7dcb3abe8b
+  url: https://storage.googleapis.com/harbor-bosh-releases/harbor-container-registry-1.6.2.tgz
+- name: "bpm"
+  version: latest
+- name: "routing"
+  version: latest
+
+stemcells:
+- alias: default
+  os: ubuntu-trusty
+  version: latest
+
+addons:
+- name: harbor-bosh-dns
+  jobs:
+  - name: harbor-dns-aliases
+    release: harbor-container-registry
+    properties:
+      aliases:
+        harbor.((system_domain)):
+        - "*.harbor-app.deployment-network.harbor-deployment.bosh"
+        uaa.server.local:
+        - "*.uaa-app.deployment-network.uaa-deployment.bosh"
+- name: enable-bosh-dns
+  jobs:
+  - name: enable-bosh-dns
+    release: harbor-container-registry
+
+instance_groups:
+- name: harbor-app
+  azs: ((azs))
+  instances: 1
+  jobs:
+  - name: route_registrar
+    release: routing
+    consumes:
+      nats:
+        deployment: routing
+        from: nats
+    properties:
+      route_registrar:
+        routes:
+        - name: harbor-api
+          port: 80
+          registration_interval: 10s
+          uris:
+          - harbor.((system_domain))
+        - name: harbor-docker
+          port: 4443
+          registration_interval: 10s
+          uris:
+          - harbor.((system_domain))
+  - name: harbor
+    release: harbor-container-registry
+    properties:
+      db:
+        host: ((mySQL_proxy_ip))
+        port: 3306
+        user: harbor
+      email:
+        from: ((smtp_from))
+        insecure: true
+        server: ((smtp_server))
+      ldap:
+        basedn: ((ldap_user_search_base_dn))
+        filter: samAccountName={0}
+        group_basedn: ((ldap_group_search_base_dns))
+        saerchdn: ((ldap_user_dn))
+        searchpwd: ((ldap_user_pass))
+        uid: sAMAccountName
+        url: ((ldap_host))
+        verify_cert: false
+      hostname: harbor.((system_domain))
+      db_password: ((/database/harbor_db_password))
+      admin_password: ((harbor_admin_password))
+      auth_mode: ldap_auth
+      clair_db_password: ((clair_db_password))
+      with_clair: false
+      with_notary: false
+      ssl:
+        cert: ((/certs/wildcard.certificate))
+        key: ((/certs/wildcard.private_key))
+        ca: ((/certs/default_ca.certificate))
+  - name: docker
+    release: harbor-container-registry
+  # this is an errand job
+  - name: smoke-test
+    release: harbor-container-registry
+    properties: {}
+    consumes:
+      harbor_reference: {from: harbor}
+  stemcell: default
+  vm_resources:
+    cpu: 2
+    ram: 2048
+    ephemeral_disk_size: 10240
+  persistent_disk: 20480
+  networks:
+  - name: default
+
+update:
+  canaries: 2
+  max_in_flight: 1
+  canary_watch_time: 30000-300000
+  update_watch_time: 30000-300000
+
+variables:
+- name: harbor_admin_password
+  type: password
+- name: clair_db_password
+  type: password

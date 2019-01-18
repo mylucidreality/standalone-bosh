@@ -1,0 +1,22 @@
+platform: linux
+image_resource:
+  type: docker-image
+  source:
+    repository: concourse/bosh-cli
+    tag: "latest"
+    
+inputs:
+  - name: pcf-health-check
+outputs:
+  - name: email
+
+params:
+  BOSH_ADMIN_CLIENT:
+  PCF_SCRT:
+  PCF_URL:
+  PCF_CERT:
+  VERBOSE_TEST:
+  PCF_ENV:
+
+run:
+  path: pcf-health-check/tasks/health-check/task.sh

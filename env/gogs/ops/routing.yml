@@ -1,0 +1,42 @@
+---
+- type: replace
+  path: /instance_groups/name=gogs/jobs/-
+  value:
+    name: route_registrar
+    release: routing
+    consumes:
+      nats:
+        from: nats
+        deployment: routing
+    properties:
+      route_registrar:
+        routes:
+        - name: gogs
+          port: 8080
+          tags:
+            component: gogs
+          registration_interval: 10s
+          uris:
+          - gogs.((system_domain))
+
+# - type: replace
+#   path: /addons?/-
+#   value:
+#     name: bpm
+#     include:
+#       stemcell:
+#       - os: ubuntu-trusty
+#     jobs:
+#     - name: bpm
+#       release: bpm
+
+- type: replace
+  path: /releases/-
+  value:
+    name: routing
+    version: latest
+- type: replace
+  path: /releases/-
+  value:
+    name: "bpm"
+    version: latest

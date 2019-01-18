@@ -90,7 +90,7 @@ echo -e "$(tput sgr0)"
 credhub api --server $DIRECTOR_IP:8844 --skip-tls-validation
 credhub login --client-name=credhub-admin --client-secret=$(bosh int ./customizations/"$PCF_ENV"-director-vars-store.yml --path /credhub_admin_client_secret)
 credhub set -n /credhub-admin -t user -z credhub-admin -w $(bosh int ./customizations/"$PCF_ENV"-director-vars-store.yml --path /credhub_admin_client_secret)
-credhub set -n /ldap_user -t user -z REPLACE_ME -w 'QPv!81oCKLWVf'
+credhub set -n /ldap_user -t user -z REPLACE_ME -w REPLACE_ME
 credhub set -n /director -t user -z director -w $(bosh int ./customizations/"$PCF_ENV"-director-vars-store.yml --path /director_password)
 credhub set -n /gorouter_password  --type password --password=$(bosh int ./customizations/"$PCF_ENV"-director-vars-store.yml --path /gorouter_password)
 credhub set -n /admin_password  --type password --password=$(bosh int ./customizations/"$PCF_ENV"-director-vars-store.yml --path /admin_password)

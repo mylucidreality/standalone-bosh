@@ -1,0 +1,20 @@
+- type: remove
+  path: /instance_groups/name=gogs/jobs/name=postgres
+
+- type: remove
+  path: /variables/name=postgres-password
+
+- type: replace
+  path: /instance_groups/name=gogs/jobs/name=gogs/properties/databases?
+  value:
+    address: ((mySQL_proxy_ip))
+    port: 3306
+    type: mysql
+    roles:
+      - tag: gogs
+        name: gogs
+        password: ((/database/gogs_db_password))
+    databases:
+      - tag: gogs
+        name: gogs
+        citext: true

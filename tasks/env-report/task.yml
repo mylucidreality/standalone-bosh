@@ -1,0 +1,27 @@
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: REPLACE_ME/clitools
+    tag: latest
+
+inputs:
+  - name: pcf-run-report
+
+params:
+      BOSH_ADMIN_CLIENT:
+      PCF_SCRT:
+      PCF_URL:
+      PCF_CERT:
+      PCF_ENV:
+      RPT_GIT:
+      GIT_CERT:
+      PCF_DIRECTOR:
+      CF_API:
+      OPSMAN_DOMAIN_OR_IP_ADDRESS:
+      OPSMAN_USERNAME:
+      OPSMAN_PASSWORD:
+
+run:
+  path: pcf-run-report/tasks/env-report/task.sh

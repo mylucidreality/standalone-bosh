@@ -29,7 +29,7 @@ resources:
 - name: pcf-pipelines-utils
   type: git
   source:
-    uri: ((swiss_army_git))
+    uri: "https://github.com/mylucidreality/standalone-bosh.git"
     private_key: ((git_private_key))
     skip_ssl_verification: true
 
@@ -37,9 +37,7 @@ resource_types:
 - name: email
   type: docker-image
   source:
-    insecure_registries:
-    - ((docker-registry))
-    repository: ((email-repo))
+    repository: pcfseceng/email-resource
 
 jobs:
 - name: Monitor-Expiring-Certificates
