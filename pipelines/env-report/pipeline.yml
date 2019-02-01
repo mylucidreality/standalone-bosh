@@ -4,8 +4,6 @@ resources:
   source:
     uri: "https://github.com/mylucidreality/standalone-bosh.git"
     private_key: ((git_key.private_key))
-    branch: master
-    skip_ssl_verification: true
 
 - name: schedule
   type: time
