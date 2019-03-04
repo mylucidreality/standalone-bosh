@@ -161,7 +161,7 @@ networks:
     - REPLACE_ME
     - REPLACE_ME
     - REPLACE_ME
-    - REPLACE_ME    
+    - REPLACE_ME
   type: manual
 vm_extensions:
 - name: cf-router-network-properties
